@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.2" xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
+
+    <persistence-unit name="ssbd05adminPU" transaction-type="JTA">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <jta-data-source>java:/jdbc/ssbd05adminDS</jta-data-source>
+
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.UserEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.PersonalDataEntity</class>
+
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.AccessLevelEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.ClientEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.ManagementEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.EntertainerEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.EntertainerUnavailabilityEntity</class>
+
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.OfferEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.OfferAvailabilityEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.ReservationEntity</class>
+
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.QueryLogEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.SessionLogEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.AccessLevelChangeLogEntity</class>
+
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.AuthenticationViewEntity</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <shared-cache-mode>NONE</shared-cache-mode>
+
+        <properties>
+            <property name="eclipselink.logging.level" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="true"/>
+            <property name="javax.persistence.schema-generation.database.action" value="none"/>
+            <property name="eclipselink.jdbc.driver" value="org.postgresql.Driver"/>
+        </properties>
+    </persistence-unit>
+
+    <persistence-unit name="ssbd05authPU" transaction-type="JTA">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <jta-data-source>java:/jdbc/ssbd05authDS</jta-data-source>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.UserEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.PersonalDataEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.AuthenticationViewEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.AccessLevelEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.ClientEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.ManagementEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.EntertainerEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.EntertainerUnavailabilityEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.SessionLogEntity</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <shared-cache-mode>NONE</shared-cache-mode>
+
+        <properties>
+            <property name="eclipselink.logging.level" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="true"/>
+            <property name="eclipselink.canonicalmodel.prefix" value="auth"/>
+            <property name="eclipselink.jdbc.driver" value="org.postgresql.Driver"/>
+        </properties>
+    </persistence-unit>
+
+    <persistence-unit name="ssbd05mokPU" transaction-type="JTA">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <jta-data-source>java:/jdbc/ssbd05mokDS</jta-data-source>
+
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.UserEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.PersonalDataEntity</class>
+
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.AccessLevelEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.ClientEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.ManagementEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.EntertainerEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.EntertainerUnavailabilityEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.QueryLogEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.SessionLogEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.SessionLogEntity</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <shared-cache-mode>NONE</shared-cache-mode>
+
+        <properties>
+            <property name="eclipselink.logging.level" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="true"/>
+            <property name="eclipselink.canonicalmodel.prefix" value="mok"/>
+            <property name="eclipselink.jdbc.driver" value="org.postgresql.Driver"/>
+        </properties>
+    </persistence-unit>
+
+    <persistence-unit name="ssbd05mooPU" transaction-type="JTA">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+        <jta-data-source>java:/jdbc/ssbd05mooDS</jta-data-source>
+
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.UserEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.PersonalDataEntity</class>
+
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.AccessLevelEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.ClientEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.ManagementEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.EntertainerEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.EntertainerUnavailabilityEntity</class>
+
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.OfferEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.OfferAvailabilityEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.ReservationEntity</class>
+
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.QueryLogEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.SessionLogEntity</class>
+        <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.AccessLevelChangeLogEntity</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+        <shared-cache-mode>NONE</shared-cache-mode>
+
+        <properties>
+            <property name="eclipselink.logging.level" value="FINE"/>
+            <property name="eclipselink.logging.parameters" value="true"/>
+            <property name="eclipselink.canonicalmodel.prefix" value="moo"/>
+            <property name="eclipselink.jdbc.driver" value="org.postgresql.Driver"/>
+        </properties>
+    </persistence-unit>
+
+</persistence>

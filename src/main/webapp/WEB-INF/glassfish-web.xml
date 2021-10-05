@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE glassfish-web-app PUBLIC "-//GlassFish.org//DTD GlassFish Application Server 3.1 Servlet 3.0//EN"
+        "http://glassfish.org/dtds/glassfish-web-app_3_0-1.dtd">
+<glassfish-web-app error-url="">
+
+    <!--  ROLES -->
+    <security-role-mapping>
+        <role-name>Management</role-name>
+        <group-name>MANAGEMENT</group-name>
+    </security-role-mapping>
+    <security-role-mapping>
+        <role-name>Entertainer</role-name>
+        <group-name>ENTERTAINER</group-name>
+    </security-role-mapping>
+    <security-role-mapping>
+        <role-name>Client</role-name>
+        <group-name>CLIENT</group-name>
+    </security-role-mapping>
+
+    <class-loader delegate="true"/>
+
+</glassfish-web-app>

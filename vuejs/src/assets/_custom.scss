@@ -1,0 +1,40 @@
+//$primary: orange;
+//$body-bg: #495057;
+
+$primary: #4D203C;
+$secondary: #C9D6DF;
+$success: #11D3BC;
+$danger: #F67280;
+$info: #A2D5F2;
+$entertainer: #331E42;
+$warning: #FF7E67;
+$light: #FAFAFA;
+$dark: #4e4e4e;
+
+$body-bg: $light;
+
+// Import Bootstrap and BootstrapVue source SCSS files
+@import '~bootstrap/scss/bootstrap.scss';
+@import '~bootstrap-vue/src/index.scss';
+
+a {
+  text-decoration: none;
+}
+a:hover {
+  color: #FB0660;
+  text-decoration: none;
+};
+
+.star {
+  display: inline-block !important;
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.actionBtn {
+  border: transparent;
+}
+.actionBtn:hover {
+  color: #FB0660;
+}

@@ -1,0 +1,70 @@
+{
+  "name": "vuejs",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve --port 8088",
+    "build": "vue-cli-service build",
+    "lint": "vue-cli-service lint"
+  },
+  "dependencies": {
+    "@js-joda/core": "^3.2.0",
+    "@kangc/v-md-editor": "^1.7.6",
+    "@vue/cli": "^4.5.12",
+    "axios": "^0.21.1",
+    "bootstrap": "^4.6.0",
+    "bootstrap-vue": "^2.21.2",
+    "core-js": "^3.6.5",
+    "jws": "^4.0.0",
+    "marked": "^2.1.1",
+    "moment": "^2.29.1",
+    "vee-validate": "^3.4.5",
+    "vue": "^2.6.12",
+    "vue-country-flag": "^2.1.0",
+    "vue-i18n": "^8.24.4",
+    "vue-meta": "^2.4.0",
+    "vue-recaptcha-v3": "^1.9.0",
+    "vue-router": "^3.2.0",
+    "vue-suggestion": "^1.1.0",
+    "vue2-datepicker": "^3.9.1",
+    "vue2-editor": "^2.10.2",
+    "vuejs-datepicker": "^1.6.2",
+    "vuelidate": "^0.7.6",
+    "vuex": "^3.6.2"
+  },
+  "devDependencies": {
+    "@kazupon/vue-i18n-loader": "^0.5.0",
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-router": "^4.5.12",
+    "@vue/cli-service": "~4.5.0",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^6.7.2",
+    "eslint-plugin-vue": "^6.2.2",
+    "sass": "^1.32.12",
+    "sass-loader": "^10",
+    "vue-directive-markdown": "^1.2.1",
+    "vue-directives": "^0.1.0",
+    "vue-star-rating": "^1.7.0",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

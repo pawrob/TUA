@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+         version="4.0">
+    <default-context-path>/ssbd05</default-context-path>
+    <security-constraint>
+        <display-name>TransportSecured</display-name>
+        <web-resource-collection>
+            <web-resource-name>TransportSecured</web-resource-name>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <description>USE: http --verify no https://localhost:8181/ssbd05/</description>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+
+    <!--Roles declaration-->
+    <security-role>
+        <role-name>Client</role-name>
+    </security-role>
+    <security-role>
+        <role-name>Entertainer</role-name>
+    </security-role>
+    <security-role>
+        <role-name>Management</role-name>
+    </security-role>
+
+    <env-entry>
+        <env-entry-name>enableMailing</env-entry-name>
+        <env-entry-type>java.lang.Boolean</env-entry-type>
+        <env-entry-value>${enableMailing}</env-entry-value>
+    </env-entry>
+    <env-entry>
+        <env-entry-name>symmetricCryptKey</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>7B66CB2371B02644841583934AC34B048C33E8188218812078461349140C5997</env-entry-value>
+    </env-entry>
+    <env-entry>
+        <env-entry-name>symmetricCryptSalt</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>365F69DD9BBF0E6F</env-entry-value>
+    </env-entry>
+    <env-entry>
+        <env-entry-name>maxTransactionRetries</env-entry-name>
+        <env-entry-type>java.lang.Integer</env-entry-type>
+        <env-entry-value>3</env-entry-value>
+    </env-entry>
+    <env-entry>
+        <description>Number of attempts after account is suspended (active = false)</description>
+        <env-entry-name>maxFaliluresLogin</env-entry-name>
+        <env-entry-type>java.lang.Integer</env-entry-type>
+        <env-entry-value>3</env-entry-value>
+    </env-entry>
+    <env-entry>
+        <description>Mailing host</description>
+        <env-entry-name>mailHost</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>smtp.gmail.com</env-entry-value>
+    </env-entry>
+    <env-entry>
+        <env-entry-name>mailPort</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>465</env-entry-value>
+    </env-entry>
+    <env-entry>
+        <env-entry-name>mailUsername</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>agencja.rozrywki@gmail.com</env-entry-value>
+    </env-entry>
+    <env-entry>
+        <env-entry-name>mailPassword</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>wyirlrgevuhvpdzl</env-entry-value>
+    </env-entry>
+    <env-entry>
+        <env-entry-name>jwtSecret</env-entry-name>
+        <env-entry-type>java.lang.String</env-entry-type>
+        <env-entry-value>
+            8PKfQo7ubbZLdiCjjMzF91ZMclsJPTKurizVicX-0A9HbXVXNFrTEu1_B4O3Pl-In1XVx_FRq-wqJvh-uvKfKKswyfUc93mqcH86YtFPM317EHdr8looHaenHbpBWZd3CpvNEZkScaZZAo70S-CsfzC9-1fXv8tkDjaX028IUQ0
+        </env-entry-value>
+    </env-entry>
+    <env-entry>
+        <env-entry-name>jwtTimeout</env-entry-name>
+        <env-entry-type>java.lang.Long</env-entry-type>
+        <env-entry-value>900000</env-entry-value>
+        <!--15 * 60 * 1000-->
+        <!--        todo: ZMIENIC PO PREZENTACJI-->
+    </env-entry>
+    <env-entry>
+        <env-entry-name>systemSchedulerHour</env-entry-name>
+        <env-entry-type>java.lang.Integer</env-entry-type>
+        <env-entry-value>24</env-entry-value>
+    </env-entry>
+</web-app>
