@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "reservation", schema = "public")
+@Table(name = "reservation", schema = "ssbd05")
 @EntityListeners(EntitiesLogger.class)
 @NamedQueries({
         @NamedQuery(name = "ReservationEntity.findByClient", query = "SELECT k FROM ReservationEntity k WHERE k.client = :client")

@@ -7,7 +7,7 @@ import java.time.OffsetDateTime;
 
 @Setter
 @Entity
-@Table(name = "access_level_change_log", schema = "public")
+@Table(name = "access_level_change_log", schema = "ssbd05")
 public class AccessLevelChangeLogEntity extends AbstractEntity {
     private OffsetDateTime actionTimestamp;
     private String accessLevel;

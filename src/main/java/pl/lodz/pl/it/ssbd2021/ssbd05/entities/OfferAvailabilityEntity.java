@@ -8,7 +8,7 @@ import java.time.OffsetTime;
 
 @Setter
 @Entity
-@Table(name = "offer_availability", schema = "public")
+@Table(name = "offer_availability", schema = "ssbd05")
 @EntityListeners(EntitiesLogger.class)
 public class OfferAvailabilityEntity extends AbstractEntity {
     private int weekDay;

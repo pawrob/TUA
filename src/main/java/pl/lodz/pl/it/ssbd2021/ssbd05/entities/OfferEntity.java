@@ -12,7 +12,7 @@ import java.util.Collection;
 @Setter
 @Entity
 @NoArgsConstructor
-@Table(name = "offer", schema = "public")
+@Table(name = "offer", schema = "ssbd05")
 @NamedQueries({
         @NamedQuery(name = "OfferEntity.findAllFavouritesOffers",
                 query = "SELECT k FROM OfferEntity k WHERE :clientid in (SELECT c.id FROM k.likedBy c)")

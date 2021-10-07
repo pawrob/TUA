@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Setter(AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "authentication_view", schema = "public")
+@Table(name = "authentication_view", schema = "ssbd05")
 public class AuthenticationViewEntity {
     private Long id;
     private String login;

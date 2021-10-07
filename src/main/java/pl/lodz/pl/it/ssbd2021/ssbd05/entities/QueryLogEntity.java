@@ -7,7 +7,7 @@ import java.time.OffsetDateTime;
 
 @Setter
 @Entity
-@Table(name = "query_log", schema = "public")
+@Table(name = "query_log", schema = "ssbd05")
 public class QueryLogEntity extends AbstractEntity {
     private OffsetDateTime actionTimestamp;
     private String query;

@@ -11,7 +11,7 @@ import java.util.Collection;
 
 @Setter
 @Entity
-@Table(name = "user", schema = "public")
+@Table(name = "user", schema = "ssbd05")
 @NamedQueries({
         @NamedQuery(name = "UserEntity.findByEmail", query = "SELECT k FROM UserEntity k WHERE k.email = :email"),
         @NamedQuery(name = "UserEntity.findByLogin", query = "SELECT k FROM UserEntity k WHERE k.login = :login")

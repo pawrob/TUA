@@ -11,7 +11,7 @@ import java.util.Collection;
 @Entity
 @DiscriminatorValue("ENTERTAINER")
 @PrimaryKeyJoinColumn(name = "access_level_id")
-@Table(name = "entertainer", schema = "public")
+@Table(name = "entertainer", schema = "ssbd05")
 @EntityListeners(EntitiesLogger.class)
 public class EntertainerEntity extends AccessLevelEntity {
     private String description="";

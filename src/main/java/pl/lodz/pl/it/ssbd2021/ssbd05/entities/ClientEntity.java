@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Getter
 @DiscriminatorValue("CLIENT")
 @PrimaryKeyJoinColumn(name = "access_level_id")
-@Table(name = "client", schema = "public")
+@Table(name = "client", schema = "ssbd05")
 @EntityListeners(EntitiesLogger.class)
 @NamedQueries({
         @NamedQuery(name = "ClientEntity.findByUser", query = "SELECT k FROM ClientEntity k WHERE k.user = :user")

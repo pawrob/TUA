@@ -7,7 +7,7 @@ import javax.persistence.*;
 @Entity
 @DiscriminatorValue("MANAGEMENT")
 @PrimaryKeyJoinColumn(name = "access_level_id")
-@Table(name = "management", schema = "public")
+@Table(name = "management", schema = "ssbd05")
 @EntityListeners(EntitiesLogger.class)
 public class ManagementEntity extends AccessLevelEntity {
     public ManagementEntity() {

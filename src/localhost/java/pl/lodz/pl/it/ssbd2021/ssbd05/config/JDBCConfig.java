@@ -6,11 +6,11 @@ import java.sql.Connection;
 
 @DataSourceDefinition(
         name = "java:app/jdbc/ssbd05adminDS",
-        className = "org.postgresql.ds.PGSimpleDataSource",
+        className = "org.mariadb.jdbc.MariaDbDataSource",
         user = "ssbd05admin",
         password = "L0dbr0k",
         serverName = "localhost",
-        portNumber = 5432,
+        portNumber = 3306,
         databaseName = "ssbd05",
         initialPoolSize = 1,
         minPoolSize = 0,
@@ -21,33 +21,33 @@ import java.sql.Connection;
 
 @DataSourceDefinition(
         name = "java:app/jdbc/ssbd05authDS",
-        className = "org.postgresql.ds.PGSimpleDataSource",
+        className = "org.mariadb.jdbc.MariaDbDataSource",
         user = "ssbd05auth",
         password = "woj@uth",
         serverName = "localhost",
-        portNumber = 5432,
+        portNumber = 3306,
         databaseName = "ssbd05",
         transactional = true,
         isolationLevel = Connection.TRANSACTION_READ_COMMITTED)
 
 @DataSourceDefinition(
         name = "java:app/jdbc/ssbd05mokDS",
-        className = "org.postgresql.ds.PGSimpleDataSource",
+        className = "org.mariadb.jdbc.MariaDbDataSource",
         user = "ssbd05mok",
         password = "w1k1ngow1e",
         serverName = "localhost",
-        portNumber = 5432,
+        portNumber = 3306,
         databaseName = "ssbd05",
         transactional = true,
         isolationLevel = Connection.TRANSACTION_READ_COMMITTED)
 
 @DataSourceDefinition(
         name = "java:app/jdbc/ssbd05mooDS",
-        className = "org.postgresql.ds.PGSimpleDataSource",
+        className = "org.mariadb.jdbc.MariaDbDataSource",
         user = "ssbd05moo",
         password = "w0j0wnicy",
         serverName = "localhost",
-        portNumber = 5432,
+        portNumber = 3306,
         databaseName = "ssbd05",
         transactional = true,
         isolationLevel = Connection.TRANSACTION_READ_COMMITTED)

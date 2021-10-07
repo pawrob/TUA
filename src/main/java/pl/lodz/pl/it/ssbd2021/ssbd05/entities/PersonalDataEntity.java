@@ -11,7 +11,7 @@ import javax.persistence.*;
         @NamedQuery(name = "PersonalDataEntity.findByNameOrSurname", query = "SELECT p FROM PersonalDataEntity p WHERE LOWER(p.name) LIKE LOWER(:name) or LOWER(p.surname) LIKE LOWER(:name)")
 })
 @Entity
-@Table(name = "personal_data", schema = "public")
+@Table(name = "personal_data", schema = "ssbd05")
 public class PersonalDataEntity {
     private long userId;
     private long version;

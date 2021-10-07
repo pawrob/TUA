@@ -9,7 +9,7 @@ import java.time.OffsetDateTime;
 
 @Setter
 @Entity
-@Table(name = "session_log", schema = "public")
+@Table(name = "session_log", schema = "ssbd05")
 @NamedQueries({
         @NamedQuery(name = "UserEntity.lastFailedLogin", query = "SELECT  k FROM SessionLogEntity k WHERE k.user.id = :id " +
                 "AND k.successful = false ORDER BY k.actionTimestamp desc"),

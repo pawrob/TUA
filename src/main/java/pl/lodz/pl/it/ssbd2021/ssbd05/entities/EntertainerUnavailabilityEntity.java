@@ -10,7 +10,7 @@ import java.time.OffsetDateTime;
 
 @Setter
 @Entity
-@Table(name = "entertainer_unavailability", schema = "public")
+@Table(name = "entertainer_unavailability", schema = "ssbd05")
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(EntitiesLogger.class)
