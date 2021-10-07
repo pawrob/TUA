@@ -135,7 +135,7 @@
                     </security>
                 </datasource>
 
-                <datasource jndi-name="java:jboss/jdbc/ssbd05adminDS" pool-name="ssbd05adminDS" enabled="true" use-java-context="true">
+                <datasource jndi-name="java:/jdbc/ssbd05adminDS" pool-name="ssbd05adminDS" enabled="true" use-java-context="true">
                     <connection-url>jdbc:mariadb://localhost:3306/ssbd05</connection-url>
                     <driver>mariadb</driver>
                     <security>
@@ -143,7 +143,7 @@
                         <password>L0dbr0k</password>
                     </security>
                 </datasource>
-                <datasource jndi-name="java:jboss/jdbc/ssbd05authDS" pool-name="ssbd05authDS" enabled="true" use-java-context="true">
+                <datasource jndi-name="java:/jdbc/ssbd05authDS" pool-name="ssbd05authDS" enabled="true" use-java-context="true">
                     <connection-url>jdbc:mariadb://localhost:3306/ssbd05</connection-url>
                     <driver>mariadb</driver>
                     <security>
@@ -151,7 +151,7 @@
                         <password>woj@uth</password>
                     </security>
                 </datasource>
-                <datasource jndi-name="java:jboss/jdbc/ssbd05mokDS" pool-name="ssbd05mokDS" enabled="true" use-java-context="true">
+                <datasource jndi-name="java:/jdbc/ssbd05mokDS" pool-name="ssbd05mokDS" enabled="true" use-java-context="true">
                     <connection-url>jdbc:mariadb://localhost:3306/ssbd05</connection-url>
                     <driver>mariadb</driver>
                     <security>
@@ -159,7 +159,7 @@
                         <password>w1k1ngow1e</password>
                     </security>
                 </datasource>
-                <datasource jndi-name="java:jboss/jdbc/ssbd05mooDS" pool-name="ssbd05mooDS" enabled="true" use-java-context="true">
+                <datasource jndi-name="java:/jdbc/ssbd05mooDS" pool-name="ssbd05mooDS" enabled="true" use-java-context="true">
                     <connection-url>jdbc:mariadb://localhost:3306/ssbd05</connection-url>
                     <driver>mariadb</driver>
                     <security>
@@ -175,9 +175,6 @@
                     </driver>
                     <driver name="mariadb" module="org.mariadb">
                         <xa-datasource-class>org.mariadb.jdbc.MariaDbDataSource</xa-datasource-class>
-                    </driver>
-                    <driver name="postgresql" module="org.postgresql">
-                        <driver-class>org.postgresql.Driver</driver-class>
                     </driver>
                 </drivers>
             </datasources>
