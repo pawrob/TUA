@@ -56,7 +56,7 @@
 
         <enableMailing>true</enableMailing>
         <wildfly-home>C:\Users\Sisilaish\wildfly-25.0.0.Final</wildfly-home>
-        <db.jdbc.url>jdbc:mariadb://localhost:3306/ssbd05</db.jdbc.url>
+        <db.jdbc.url>jdbc:mariadb://host.docker.internal:3306/ssbd05</db.jdbc.url>
         <mysql.driver.name>mariadb-java-client-2.3.0.jar</mysql.driver.name>
     </properties>
 

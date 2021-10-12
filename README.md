@@ -1,8 +1,7 @@
 # TUA
 ```
 docker build -t tua .
-docker run -p 8443:8080 tua
-
+docker run -dp 8443:8443 -p 9990:9990 tua
 ```
 ```
 docker pull mariadb
