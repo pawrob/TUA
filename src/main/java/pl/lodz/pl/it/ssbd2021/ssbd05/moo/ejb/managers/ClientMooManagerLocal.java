@@ -9,6 +9,6 @@ import javax.ejb.Local;
 
 @Local
 public interface ClientMooManagerLocal extends ManagerLocal {
-    @RolesAllowed({"Client"})
+    @RolesAllowed({"CLIENT"})
     ClientEntity getClient(Long id) throws AbstractAppException;
 }

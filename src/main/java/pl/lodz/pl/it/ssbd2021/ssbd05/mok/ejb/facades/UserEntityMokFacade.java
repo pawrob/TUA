@@ -58,7 +58,7 @@ public class UserEntityMokFacade extends AbstractMokFacade<UserEntity> {
     }
 
     @Override
-    @RolesAllowed({"Management", "Client"})
+        @RolesAllowed({"MANAGEMENT", "CLIENT"})
     public UserEntity findAndRefresh(Object id) throws AbstractAppException {
         return super.findAndRefresh(id);
     }

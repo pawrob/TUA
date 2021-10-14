@@ -71,7 +71,7 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed({"Client"})
+    @RolesAllowed({"CLIENT"})
     public List<ReservationEntity> getSelfReservations() throws AbstractAppException {
         var userEntity = userEntityMooFacade.findByLogin(ctx.getCallerPrincipal().getName());
         var clientEntity = clientEntityMooFacade.findByUser(userEntity);
@@ -93,7 +93,7 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
         return reservationEntity;
     }
     @Override
-    @RolesAllowed({"Entertainer"})
+    @RolesAllowed({"ENTERTAINER"})
     public ReservationEntity endReservation(Long id) throws AbstractAppException {
         EntertainerEntity myself = entertainerFacade.findByLogin(ctx.getCallerPrincipal().getName());
         ReservationEntity reservation = reservationFacade.findForEntertainer(id, myself.getId());
@@ -114,7 +114,7 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed({"Client"})
+    @RolesAllowed({"CLIENT"})
     public ReservationEntity createReservation(ReservationEntity reservation, Long offerId, Long offerVersion) throws AbstractAppException {
         reservationAssignment(reservation, offerId, offerVersion, ctx.getCallerPrincipal().getName());
         entertainerFacade.lockPessimisticRead(reservation.getOffer().getEntertainer());
@@ -213,7 +213,7 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed({"Entertainer"})
+    @RolesAllowed({"ENTERTAINER"})
     public ReservationEntity acceptReservation(Long id) throws AbstractAppException {
         EntertainerEntity myself = entertainerFacade.findByLogin(ctx.getCallerPrincipal().getName());
         ReservationEntity reservation = reservationFacade.findForEntertainer(id, myself.getId());
@@ -237,7 +237,7 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
      * @throws NotAllowedAppException - wyjątek rzucany w przypadku braku uprawnień
      */
     @Override
-    @RolesAllowed({"Client"})
+    @RolesAllowed({"CLIENT"})
     public ReservationEntity updateRating(Long id, int rating, String comment) throws AbstractAppException {
         ReservationEntity reservationEntity = reservationFacade.findAndRefresh(id);
         if (reservationEntity == null) {
@@ -266,7 +266,7 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
      * @throws NotAllowedAppException - wyjątek rzucany w przypadku braku uprawnień
      */
     @Override
-    @RolesAllowed({"Client"})
+    @RolesAllowed({"CLIENT"})
     public ReservationEntity deleteRatingByClient(Long id) throws AbstractAppException {
         ReservationEntity reservationEntity = reservationFacade.findAndRefresh(id);
         if (reservationEntity == null) {
@@ -295,7 +295,7 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
      * @throws NotAllowedAppException - wyjątek rzucany w przypadku braku uprawnień
      */
     @Override
-    @RolesAllowed({"Management"})
+    @RolesAllowed({"MANAGEMENT"})
     public ReservationEntity deleteRatingByManagement(Long id) throws AbstractAppException {
         ReservationEntity reservationEntity = reservationFacade.findAndRefresh(id);
         if (reservationEntity == null) {
@@ -334,7 +334,7 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
      * @return liste rezerwacji pdr
      */
     @Override
-    @RolesAllowed({"Entertainer"})
+    @RolesAllowed({"ENTERTAINER"})
     public List<ReservationEntity> getAllReservationsForEntertainer() {
         EntertainerEntity myself = entertainerFacade.findByLogin(ctx.getCallerPrincipal().getName());
         return reservationFacade.findAllForEntertainer(myself.getId());
@@ -348,7 +348,7 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed({"Client"})
+    @RolesAllowed({"CLIENT"})
     public ReservationEntity editReservation(Long id, ReservationEditDTO reservationEditDTO) throws AbstractAppException {
         ReservationEntity reservationEntity = reservationFacade.findAndRefresh(id);
 
@@ -441,7 +441,7 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed("Client")
+    @RolesAllowed("CLIENT")
     public ReservationEntity clientCancelReservation(Long id) throws AbstractAppException {
         var clientEntity = clientEntityMooFacade.findByLogin(ctx.getCallerPrincipal().getName());
 
@@ -464,7 +464,7 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed("Entertainer")
+    @RolesAllowed("ENTERTAINER")
     public ReservationEntity entertainerCancelReservation(Long id) throws AbstractAppException {
         var entertainerEntity = entertainerFacade.findByLogin(ctx.getCallerPrincipal().getName());
 

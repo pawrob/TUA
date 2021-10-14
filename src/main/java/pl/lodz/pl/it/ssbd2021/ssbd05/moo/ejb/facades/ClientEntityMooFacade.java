@@ -46,7 +46,7 @@ public class ClientEntityMooFacade extends AbstractMooFacade<ClientEntity> {
     }
 
     @Override
-    @RolesAllowed({"Client"})
+    @RolesAllowed({"CLIENT"})
     public ClientEntity find(Object id) throws AbstractAppException {
         Long userId = (long) id;
         List<ClientEntity> allClients = super.findAll();
@@ -54,7 +54,7 @@ public class ClientEntityMooFacade extends AbstractMooFacade<ClientEntity> {
                 .findFirst().orElseThrow(() -> UserNotFoundAppException.createUserWithProvidedIdNotFoundException(userId));
     }
 
-    @RolesAllowed({"Client"})
+    @RolesAllowed({"CLIENT"})
     public ClientEntity findByLogin(Object login) throws AbstractAppException {
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Object> cq = getEntityManager().getCriteriaBuilder().createQuery();

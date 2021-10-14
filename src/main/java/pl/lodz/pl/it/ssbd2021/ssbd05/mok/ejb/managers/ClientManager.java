@@ -115,7 +115,7 @@ public class ClientManager extends AbstractMokManager implements ClientManagerLo
      * @throws NotAllowedAppException        rzucany w przypadku gdy login uzytkownika przypisanego do konta jest inny niz uzytkownika usuwajacego konto
      */
     @Override
-    @RolesAllowed({"Client", "Management"})
+    @RolesAllowed({"CLIENT", "MANAGEMENT"})
     public void deleteUser(String login, String password) throws AbstractAppException {
         var userEntity = userEntityMokFacade.findByLogin(login);
         if (userEntity == null) {
@@ -147,7 +147,7 @@ public class ClientManager extends AbstractMokManager implements ClientManagerLo
     }
 
     @Override
-    @RolesAllowed({"Entertainer"})
+    @RolesAllowed({"ENTERTAINER"})
     public UserEntity getClientInfo(Long id) throws AbstractAppException {
         return clientEntityMokFacade.findByUserId(id).getUser();
     }

@@ -59,7 +59,7 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed({"Entertainer", "Management"})
+    @RolesAllowed({"MANAGEMENT", "ENTERTAINER"})
     public List<OfferEntity> getAllOffers() throws AbstractAppException {
         return offerEntityFacade.findAllAndRefresh();
     }
@@ -91,7 +91,7 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed({"Entertainer"})
+    @RolesAllowed({"ENTERTAINER"})
     public List<OfferEntity> getAllEntertainerOffers() throws AbstractAppException {
         List<OfferEntity> offerEntityList = offerEntityFacade.findAllAndRefresh();
         List<OfferEntity> entertainerOfferEntityList = new ArrayList<OfferEntity>();
@@ -110,7 +110,7 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed({"Client", "Entertainer", "Management"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER", "MANAGEMENT"})
     public OfferEntity getOffer(Long id) throws AbstractAppException {
         OfferEntity offerEntity = offerEntityFacade.findAndRefresh(id);
         if (offerEntity == null) {
@@ -120,7 +120,7 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
     }
 
     //    TODO:javadoc
-    @RolesAllowed("Entertainer")
+    @RolesAllowed("ENTERTAINER")
     @Override
     public OfferEntity createOffer(OfferToCreateDTO offer) throws AbstractAppException {
         EntertainerEntity entertainer = entertainerEntityMooFacade.findByLogin(ctx.getCallerPrincipal().getName());
@@ -156,7 +156,7 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
     }
 
     @Override
-    @RolesAllowed("Entertainer")
+    @RolesAllowed("ENTERTAINER")
     public OfferEntity changeActiveOffer(Long id, boolean active) throws AbstractAppException {
         OfferEntity offer = offerEntityFacade.find(id);
         offer.setActive(active);
@@ -169,7 +169,7 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
      * @return ofertę dodaną do ulubionych
      * @throws AbstractAppException
      */
-    @RolesAllowed("Client")
+    @RolesAllowed("CLIENT")
     @Override
     public OfferEntity addOfferToFavourites(Long id) throws AbstractAppException {
         var offerEntity = offerEntityFacade.findAndRefresh(id);
@@ -192,7 +192,7 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
      * @return ofertę usuniętych z  ulubionych
      * @throws AbstractAppException
      */
-    @RolesAllowed("Client")
+    @RolesAllowed("CLIENT")
     @Override
     public OfferEntity deleteOfferFromFavourites(Long id) throws AbstractAppException {
         var offerEntity = offerEntityFacade.findAndRefresh(id);
@@ -229,7 +229,7 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
      * @return zedytowaną ofertę
      * @throws AbstractAppException
      */
-    @RolesAllowed("Entertainer")
+    @RolesAllowed("ENTERTAINER")
     @Override
     public OfferEntity editOffer(Long id, OfferEditDTO offerEditDTO) throws AbstractAppException {
         OfferEntity offerEntity = offerEntityFacade.findAndRefresh(id);

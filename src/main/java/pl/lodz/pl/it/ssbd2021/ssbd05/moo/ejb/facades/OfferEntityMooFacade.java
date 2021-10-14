@@ -65,7 +65,7 @@ public class OfferEntityMooFacade extends AbstractMooFacade<OfferEntity> {
     }
 
     @Override
-    @RolesAllowed("Entertainer")
+    @RolesAllowed("ENTERTAINER")
     public void create(OfferEntity offer) throws AbstractAppException {
         super.create(offer);
     }

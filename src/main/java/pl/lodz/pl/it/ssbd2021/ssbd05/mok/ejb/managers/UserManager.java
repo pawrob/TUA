@@ -83,7 +83,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @throws UserNotFoundAppException wyjątek rzucany w przypadku braku podanego id użytkownika w bazie
      */
     @Override
-    @RolesAllowed({"Client", "Entertainer", "Management"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER", "MANAGEMENT"})
     public UserEntity editUserData(PersonalDataEntity newData) throws AbstractAppException {
         long id = newData.getUserId();
         UserEntity userEntity = userEntityFacade.find(id);
@@ -172,7 +172,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @throws NewPasswordSameAsOldAppException rzucany w przypadku gdy podane haslo jest takie samo jak poprzednie
      */
     @Override
-    @RolesAllowed({"Client", "Entertainer", "Management"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER", "MANAGEMENT"})
     public UserEntity changePassword(String oldPassword, String newPassword) throws
             AbstractAppException {
         var userEntity = userEntityFacade.findByLogin(ctx.getCallerPrincipal().getName());
@@ -211,7 +211,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @throws UniqueConstraintAppException rzucany w przypadku gdy podane haslo jest takie samo jak poprzednie
      */
     @Override
-    @RolesAllowed({"Client", "Entertainer", "Management"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER", "MANAGEMENT"})
     public UserEntity changeEmail(long id, String token, String email) throws
             AbstractAppException {
         UserEntity userEntity = userEntityFacade.find(id);
@@ -263,7 +263,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @throws UniqueConstraintAppException rzucany w przypadku gdy podane haslo jest takie samo jak poprzednie
      */
     @Override
-    @RolesAllowed({"Client", "Entertainer", "Management"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER", "MANAGEMENT"})
     public UserEntity requestChangeEmail(String login, String email) throws
             AbstractAppException {
 
@@ -375,7 +375,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @throws UserNotFoundAppException   rzucany w przypadku gdy uzytkownik nie został znaleziony
      */
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     public UserEntity activateUserAccount(Long id) throws AbstractAppException {
         UserEntity userEntity;
         buttonText = "noButton";
@@ -403,7 +403,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @throws UserNotFoundAppException   rzucany w przypadku gdy uzytkownik nie został znaleziony
      */
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     public UserEntity deactivateUserAccount(Long id) throws AbstractAppException {
         UserEntity userEntity;
 
@@ -428,7 +428,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @throws AbstractAppException - abstrakcyjny wyjątek aplikacyjny
      */
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     public List<UserEntity> getAllUsers() throws AbstractAppException {
         return userEntityFacade.findAllAndRefresh().stream().filter(userEntity -> !userEntity.getLogin().startsWith("#")).collect(Collectors.toList());
     }
@@ -441,7 +441,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @throws AbstractAppException - abstrakcyjny wyjątek aplikacyjny
      */
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     public List<UserEntity> getUserByPieceOfData(String query) throws AbstractAppException {
         List<PersonalDataEntity> personalDataEntityList = personalDataEntityMokFacade.findByNameOrSurname(query);
         List<UserEntity> list = new ArrayList<UserEntity>();
@@ -460,7 +460,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @throws UserNotFoundAppException rzucany w przypadku gdy uzytkownik nie został znaleziony
      */
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     public UserEntity getUser(Long id) throws AbstractAppException {
         UserEntity userEntity = userEntityFacade.findAndRefresh(id);
         if (userEntity == null) {
@@ -477,7 +477,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @return lista użytkowników na danej stronie
      */
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     public List<UserEntity> getUsersByPage(Long pageNumber) throws AbstractAppException {
         int pageSize = 2;
         return userEntityFacade.findAll().stream()
@@ -487,7 +487,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
     }
 
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     public UserEntity changePrivileges(Long id, List<AccessLevelDTO> accessLevelDTOList) throws AbstractAppException {
         UserEntity userEntity = userEntityFacade.findAndRefresh(id);
         if (userEntity == null) {
@@ -524,7 +524,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @param id - identyfikator konta
      */
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     public void deleteUser(Long id) throws AbstractAppException {
 
         UserEntity userEntity = userEntityFacade.findAndRefresh(id);
@@ -579,7 +579,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
     }
 
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     public AccessLevelEntity changeAccessLevelStatus(Long id, boolean status) throws AbstractAppException {
         AccessLevelEntity accessLevelEntity = accessLevelEntityMokFacade.find(id);
 

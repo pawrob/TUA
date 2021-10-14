@@ -44,12 +44,12 @@ public class EntertainerEntityMooFacade extends AbstractMooFacade<EntertainerEnt
         return super.findAndRefresh(id);
     }
 
-    @RolesAllowed({"Client"})
+    @RolesAllowed({"CLIENT"})
     public void lockPessimisticRead(EntertainerEntity entertainer){
         getEntityManager().lock(entertainer, LockModeType.PESSIMISTIC_READ);
     }
 
-    @RolesAllowed({"Entertainer"})
+    @RolesAllowed({"ENTERTAINER"})
     public EntertainerEntity findByLogin(String login){
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Object> cq = getEntityManager().getCriteriaBuilder().createQuery();

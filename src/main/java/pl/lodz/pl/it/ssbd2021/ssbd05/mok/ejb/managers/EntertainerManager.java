@@ -57,7 +57,7 @@ public class EntertainerManager extends AbstractMokManager implements Entertaine
      * @throws OptimisticLockAppException rzucany w przypadku naruszenia zasad struktury danych
      */
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     public UserEntity deactivateEntertainerAccount(Long id) throws AbstractAppException {
 
         if (!isEntertainer(id)) {
@@ -110,7 +110,7 @@ public class EntertainerManager extends AbstractMokManager implements Entertaine
      * @throws OptimisticLockAppException rzucany w przypadku naruszenia zasad struktury danych
      */
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     public UserEntity reactivateEntertainerAccount(Long id) throws AbstractAppException {
 
         if (!isEntertainer(id)) {
@@ -140,7 +140,7 @@ public class EntertainerManager extends AbstractMokManager implements Entertaine
      * @throws AbstractAppException rzucany w przypadku naruszenia zasad struktury danych
      */
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     @Interceptors(PersistenceExceptionInterceptor.class)
     public UserEntity createEnterainer(EntertainerEntity entertainerEntity) throws AbstractAppException {
         UserEntity user = entertainerEntity.getUser();
@@ -189,7 +189,7 @@ public class EntertainerManager extends AbstractMokManager implements Entertaine
      * @throws UserNotFoundAppException   wyjątek rzucany gdy nie znaleziono usera w bazie danych który posiada poziom dostepu o zadanym id
      */
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     public AccessLevelEntity changeEntertainerAccessLevelStatus(Long id, boolean status) throws AbstractAppException {
         AccessLevelEntity accessLevelEntity = accessLevelEntityMokFacade.find(id);
         buttonText = "noButton";

@@ -18,18 +18,18 @@ import java.util.List;
 @Local
 public interface EntertainerMooManagerLocal extends ManagerLocal {
 
-    @RolesAllowed("Entertainer")
+    @RolesAllowed("ENTERTAINER")
     EntertainerUnavailabilityEntity updateUnavailability(EntertainerUnavailabilityEntireDTO unavailabilityDTO) throws AbstractAppException;
 
     @PermitAll
     List<EntertainerUnavailabilityEntity> getUnavailabilities() throws AbstractAppException;
 
-    @RolesAllowed("Entertainer")
+    @RolesAllowed("ENTERTAINER")
     List<EntertainerUnavailabilityEntity> getMyUnavailabilities() throws AbstractAppException;
 
     EntertainerEntity getEntertainerByUsername(String username) throws AbstractAppException;
 
-    @RolesAllowed("Entertainer")
+    @RolesAllowed("ENTERTAINER")
     EntertainerUnavailabilityEntity createUnavailability(EntertainerUnavailabilityDTO unavailability) throws AbstractAppException;
 
     /**

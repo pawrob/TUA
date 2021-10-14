@@ -25,7 +25,7 @@ public class EntertainerUnavailabilityEntityMooFacade extends AbstractMooFacade<
     }
 
     @Override
-    @RolesAllowed({"Entertainer"})
+    @RolesAllowed({"ENTERTAINER"})
     public void create(EntertainerUnavailabilityEntity entity) throws AbstractAppException {
         super.create(entity);
     }

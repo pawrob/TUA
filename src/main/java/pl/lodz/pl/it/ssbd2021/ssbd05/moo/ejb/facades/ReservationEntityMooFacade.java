@@ -55,23 +55,23 @@ public class ReservationEntityMooFacade extends AbstractMooFacade<ReservationEnt
     }
 
     @Override
-    @RolesAllowed({"Client"})
+    @RolesAllowed({"CLIENT"})
     public ReservationEntity find(Object id) throws AbstractAppException {
         return super.find(id);
     }
 
     @Override
-    @RolesAllowed({"Client"})
+    @RolesAllowed({"CLIENT"})
     public void create(ReservationEntity entity) throws AbstractAppException {
         super.create(entity);
     }
 
     @Override
-    @RolesAllowed({"Client", "Entertainer"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER"})
     public void flush() throws AbstractAppException {
         super.flush();
     }
-    @RolesAllowed({"Client","Entertainer"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER"})
     public List<ReservationEntity> findAllForEntertainer(Long entertainer_id){
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Object> cq = getEntityManager().getCriteriaBuilder().createQuery();
@@ -81,7 +81,7 @@ public class ReservationEntityMooFacade extends AbstractMooFacade<ReservationEnt
         return q.getResultList();
     }
 
-    @RolesAllowed({"Client", "Entertainer"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER"})
     public ReservationEntity findForEntertainer(Long reservation_id, Long entertainer_id) throws AbstractAppException {
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Object> cq = getEntityManager().getCriteriaBuilder().createQuery();
@@ -98,7 +98,7 @@ public class ReservationEntityMooFacade extends AbstractMooFacade<ReservationEnt
     }
 
     @Override
-    @RolesAllowed({"Entertainer", "Client"})
+    @RolesAllowed({"ENTERTAINER", "CLIENT"})
     public void edit(ReservationEntity entity) {
         super.edit(entity);
     }

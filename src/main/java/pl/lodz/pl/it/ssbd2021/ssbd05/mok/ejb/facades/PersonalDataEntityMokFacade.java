@@ -27,19 +27,19 @@ public class PersonalDataEntityMokFacade extends AbstractMokFacade<PersonalDataE
     }
 
     @Override
-    @RolesAllowed({"Client", "Entertainer", "Management"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER", "MANAGEMENT"})
     public PersonalDataEntity find(Object id) throws AbstractAppException {
         return super.find(id);
     }
 
     @Override
-    @RolesAllowed({"Client", "Entertainer", "Management"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER", "MANAGEMENT"})
     public void create(PersonalDataEntity entity) throws AbstractAppException {
         super.create(entity);
     }
 
     @Override
-    @RolesAllowed({"Client", "Entertainer", "Management"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER", "MANAGEMENT"})
     public void flush() throws AbstractAppException {
         super.flush();
     }
