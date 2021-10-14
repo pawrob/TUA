@@ -3,6 +3,7 @@ package pl.lodz.pl.it.ssbd2021.ssbd05.ejb.manager;
 import pl.lodz.pl.it.ssbd2021.ssbd05.util.logger.TransactionLogger;
 
 import javax.annotation.Resource;
+import javax.annotation.security.PermitAll;
 import javax.ejb.EJBException;
 import javax.ejb.SessionSynchronization;
 import javax.ejb.TransactionAttribute;
@@ -64,6 +65,7 @@ public abstract class AbstractManager implements SessionSynchronization, Manager
      * @return wartość logiczna definiująca status zakończenia transakcji
      */
     @Override
+    @PermitAll
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public boolean isLastCommitted() {
         return lastCommitted;
