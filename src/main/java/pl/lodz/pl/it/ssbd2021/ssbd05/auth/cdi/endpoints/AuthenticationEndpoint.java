@@ -65,9 +65,9 @@ public class AuthenticationEndpoint extends AbstractEndpoint {
         CredentialValidationResult result = retrying(() ->
                 authenticationManager.authenticate(credential)
         );
-        retrying(() ->
-                sessionLogger.saveAuthenticationInfo(result, loginData.getLogin())
-        );
+//        retrying(() ->
+//                sessionLogger.saveAuthenticationInfo(result, loginData.getLogin())
+//        );
         if (result.getStatus() == CredentialValidationResult.Status.VALID) {
 
             return Response.accepted()

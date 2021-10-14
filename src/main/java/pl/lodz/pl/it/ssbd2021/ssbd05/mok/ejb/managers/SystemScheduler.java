@@ -34,10 +34,10 @@ public class SystemScheduler {
      * Metoda dzięki adnotacji schedule co 12 godzin sprawdza czy
      * niezweryfikowane konta zostały utworzone więcej niż dobę temu a następnie je usuwa
      */
-    @Schedule(
-            minute = "*/1",
-            hour = "*",
-            info = "deleteUserScheduler")
+//    @Schedule(
+//            minute = "*/1",
+//            hour = "*",
+//            info = "deleteUserScheduler")
     public void deleteUnverifiedUsers() throws AbstractAppException {
         userManager.deleteUnverifiedUsers(systemSchedulerHour);
     }
