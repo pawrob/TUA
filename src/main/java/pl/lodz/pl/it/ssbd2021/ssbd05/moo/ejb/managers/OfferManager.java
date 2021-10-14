@@ -214,7 +214,7 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
      * @return listę ulubionych ofert
      * @throws AbstractAppException
      */
-    @RolesAllowed("Client")
+    @RolesAllowed("CLIENT")
     @Override
     public List<OfferEntity> getFavouriteOffers() throws AbstractAppException {
         var userEntity = userEntityMooFacade.findByLogin(ctx.getCallerPrincipal().getName());

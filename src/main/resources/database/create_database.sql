@@ -314,34 +314,30 @@ WHERE u.is_active
   AND al.is_active;
 
 GRANT ALL PRIVILEGES ON ssbd05.authentication_view TO 'ssbd05admin'@'%';
-GRANT ALL PRIVILEGES ON *.* TO 'ssbd05auth'@'%';
-GRANT ALL PRIVILEGES ON *.* TO 'ssbd05admin'@'%';
-GRANT ALL PRIVILEGES ON *.* TO 'ssbd05mok'@'%';
-GRANT ALL PRIVILEGES ON *.* TO 'ssbd05moo'@'%';
 -- uprawnienia dla uzytkowników bazodanowych do poszczegolnych tabel
-# GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE ssbd05.access_level TO ssbd05mok;
-# GRANT SELECT, UPDATE ON TABLE ssbd05.access_level TO ssbd05moo;
-# GRANT SELECT ON TABLE ssbd05.authentication_view TO ssbd05auth;
-# GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE ssbd05.user TO ssbd05mok;
-# GRANT SELECT ON TABLE ssbd05.user TO ssbd05moo;
-# GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE ssbd05.session_log TO ssbd05mok;
-# GRANT INSERT, SELECT, UPDATE ON TABLE ssbd05.reservation TO ssbd05moo;
-# GRANT INSERT ON TABLE ssbd05.query_log TO ssbd05moo;
-# GRANT INSERT ON TABLE ssbd05.query_log TO ssbd05mok;
-# GRANT INSERT, UPDATE, SELECT, DELETE ON TABLE ssbd05.personal_data TO ssbd05mok;
-# GRANT SELECT ON TABLE ssbd05.personal_data TO ssbd05moo;
-# GRANT INSERT, SELECT, UPDATE ON TABLE ssbd05.offer_availability TO ssbd05moo;
-# GRANT INSERT, SELECT, UPDATE ON TABLE ssbd05.offer TO ssbd05moo;
-# GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE ssbd05.management TO ssbd05mok;
-# GRANT SELECT ON TABLE ssbd05.management TO ssbd05moo;
-# GRANT INSERT, SELECT, DELETE ON TABLE ssbd05.favourites TO ssbd05moo;
-# GRANT INSERT, SELECT, UPDATE ON TABLE ssbd05.entertainer_unavailability TO ssbd05moo;
-# GRANT SELECT, UPDATE, DELETE ON TABLE ssbd05.entertainer_unavailability TO ssbd05mok;
-# GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE ssbd05.entertainer TO ssbd05mok;
-# GRANT INSERT, SELECT, UPDATE ON TABLE ssbd05.entertainer TO ssbd05moo;
-# GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE ssbd05.client TO ssbd05mok;
-# GRANT SELECT ON TABLE ssbd05.client TO ssbd05moo;
-# GRANT INSERT ON TABLE ssbd05.access_level_change_log TO ssbd05mok;
+GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE ssbd05.access_level TO 'ssbd05mok'@'%';
+GRANT SELECT, UPDATE ON TABLE ssbd05.access_level TO 'ssbd05moo'@'%';
+GRANT SELECT ON TABLE ssbd05.authentication_view TO 'ssbd05auth'@'%';
+GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE ssbd05.user TO 'ssbd05mok'@'%';
+GRANT SELECT ON TABLE ssbd05.user TO 'ssbd05moo'@'%';
+GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE ssbd05.session_log TO 'ssbd05mok'@'%';
+GRANT INSERT, SELECT, UPDATE ON TABLE ssbd05.reservation TO 'ssbd05moo'@'%';
+GRANT INSERT ON TABLE ssbd05.query_log TO 'ssbd05moo'@'%';
+GRANT INSERT ON TABLE ssbd05.query_log TO 'ssbd05mok'@'%';
+GRANT INSERT, UPDATE, SELECT, DELETE ON TABLE ssbd05.personal_data TO 'ssbd05mok'@'%';
+GRANT SELECT ON TABLE ssbd05.personal_data TO 'ssbd05moo'@'%';
+GRANT INSERT, SELECT, UPDATE ON TABLE ssbd05.offer_availability TO 'ssbd05moo'@'%';
+GRANT INSERT, SELECT, UPDATE ON TABLE ssbd05.offer TO 'ssbd05moo'@'%';
+GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE ssbd05.management TO 'ssbd05mok'@'%';
+GRANT SELECT ON TABLE ssbd05.management TO 'ssbd05moo'@'%';
+GRANT INSERT, SELECT, DELETE ON TABLE ssbd05.favourites TO 'ssbd05moo'@'%';
+GRANT INSERT, SELECT, UPDATE ON TABLE ssbd05.entertainer_unavailability TO 'ssbd05moo'@'%';
+GRANT SELECT, UPDATE, DELETE ON TABLE ssbd05.entertainer_unavailability TO 'ssbd05mok'@'%';
+GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE ssbd05.entertainer TO 'ssbd05mok'@'%';
+GRANT INSERT, SELECT, UPDATE ON TABLE ssbd05.entertainer TO 'ssbd05moo'@'%';
+GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE ssbd05.client TO 'ssbd05mok'@'%';
+GRANT SELECT ON TABLE ssbd05.client TO 'ssbd05moo'@'%';
+GRANT INSERT ON TABLE ssbd05.access_level_change_log TO 'ssbd05mok'@'%';
 
 # -- uprawnienia do poszczegolnych sekwencji
 # GRANT USAGE ON SEQUENCE ssbd05.access_level_change_log_id_seq TO ssbd05mok;
