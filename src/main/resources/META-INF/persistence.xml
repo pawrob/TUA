@@ -33,6 +33,7 @@
             <property name="eclipselink.logging.parameters" value="true"/>
             <property name="javax.persistence.schema-generation.database.action" value="none"/>
             <property name="eclipselink.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
+            <property name="eclipselink.target-server" value="JBoss"/>
         </properties>
     </persistence-unit>
 
@@ -56,6 +57,7 @@
             <property name="eclipselink.logging.parameters" value="true"/>
             <property name="eclipselink.canonicalmodel.prefix" value="auth"/>
             <property name="eclipselink.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
+            <property name="eclipselink.target-server" value="JBoss"/>
         </properties>
     </persistence-unit>
 
@@ -82,6 +84,7 @@
             <property name="eclipselink.logging.parameters" value="true"/>
             <property name="eclipselink.canonicalmodel.prefix" value="mok"/>
             <property name="eclipselink.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
+            <property name="eclipselink.target-server" value="JBoss"/>
         </properties>
     </persistence-unit>
 
@@ -113,6 +116,7 @@
             <property name="eclipselink.logging.parameters" value="true"/>
             <property name="eclipselink.canonicalmodel.prefix" value="moo"/>
             <property name="eclipselink.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
+            <property name="eclipselink.target-server" value="JBoss"/>
         </properties>
     </persistence-unit>
 

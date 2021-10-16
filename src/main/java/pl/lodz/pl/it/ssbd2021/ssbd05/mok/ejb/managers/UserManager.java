@@ -582,7 +582,6 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
     @RolesAllowed("MANAGEMENT")
     public AccessLevelEntity changeAccessLevelStatus(Long id, boolean status) throws AbstractAppException {
         AccessLevelEntity accessLevelEntity = accessLevelEntityMokFacade.find(id);
-
         UserEntity userEnt = userEntityFacade.findAllAndRefresh()
                 .stream()
                 .filter(user -> user.getAccessLevels()
