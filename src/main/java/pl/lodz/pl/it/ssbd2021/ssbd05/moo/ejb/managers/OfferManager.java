@@ -24,6 +24,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -251,9 +253,9 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
 
         var offerValidFrom = offerEditDTO.getValidFrom();
         var offerValidTo = offerEditDTO.getValidTo();
-        var currentDateTime = OffsetDateTime.now();
-        boolean validNewDateCurrent = offerValidFrom.isAfter(currentDateTime) || offerValidFrom.isEqual(currentDateTime);
-        boolean validNewDateFromTo = offerValidTo.isAfter(offerValidFrom) || offerValidTo.isEqual(offerValidFrom);
+        var currentDateTime = Timestamp.from(Instant.now());
+        boolean validNewDateCurrent = offerValidFrom.compareTo(currentDateTime) > 0 || offerValidFrom.compareTo(currentDateTime) == 0;
+        boolean validNewDateFromTo = offerValidTo.compareTo(offerValidFrom) > 0 || offerValidTo.compareTo(offerValidFrom) == 0;
         boolean validNewDate = validNewDateCurrent && validNewDateFromTo;
         if (!validNewDate) {
             throw OfferException.createOfferNotAcceptedAppException(offerEditDTO.getId());
@@ -266,8 +268,8 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
         newOffer.setTitle(offerEditDTO.getTitle());
         newOffer.setDescription(offerEditDTO.getDescription());
         newOffer.setActive(true);
-        newOffer.setValidFrom(offerEditDTO.getValidFrom());
-        newOffer.setValidTo(offerEditDTO.getValidTo());
+        newOffer.setValidFrom(Timestamp.from(offerEditDTO.getValidFrom().toInstant()));
+        newOffer.setValidTo(Timestamp.from(offerEditDTO.getValidTo().toInstant()));
         newOffer.setOfferAvailabilities(offerEntity.getOfferAvailabilities());
         newOffer.setEntertainer(offerEntity.getEntertainer());
         offerEntityFacade.create(newOffer);

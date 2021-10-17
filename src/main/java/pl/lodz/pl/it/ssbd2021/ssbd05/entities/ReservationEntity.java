@@ -1,13 +1,12 @@
 package pl.lodz.pl.it.ssbd2021.ssbd05.entities;
 
-import lombok.Getter;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import pl.lodz.pl.it.ssbd2021.ssbd05.util.logger.EntitiesLogger;
 
 import javax.persistence.*;
-import java.time.OffsetDateTime;
+import java.sql.Timestamp;
 
 @Setter
 @Entity
@@ -19,8 +18,8 @@ import java.time.OffsetDateTime;
         @NamedQuery(name = "ReservationEntity.findByClient", query = "SELECT k FROM ReservationEntity k WHERE k.client = :client")
 })
 public class ReservationEntity extends AbstractEntity {
-    private OffsetDateTime reservationFrom;
-    private OffsetDateTime reservationTo;
+    private Timestamp reservationFrom;
+    private Timestamp reservationTo;
     private Status status;
     private Integer rating;
     private String comment;
@@ -29,13 +28,13 @@ public class ReservationEntity extends AbstractEntity {
 
     @Basic
     @Column(name = "reservation_from", nullable = false)
-    public OffsetDateTime getReservationFrom() {
+    public Timestamp getReservationFrom() {
         return reservationFrom;
     }
 
     @Basic
     @Column(name = "reservation_to", nullable = false)
-    public OffsetDateTime getReservationTo() {
+    public Timestamp getReservationTo() {
         return reservationTo;
     }
 

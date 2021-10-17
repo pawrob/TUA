@@ -5,7 +5,7 @@ import lombok.Setter;
 import pl.lodz.pl.it.ssbd2021.ssbd05.util.logger.EntitiesLogger;
 
 import javax.persistence.*;
-import java.time.OffsetDateTime;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -22,8 +22,8 @@ public class OfferEntity extends AbstractEntity {
     private String title;
     private String description;
     private boolean isActive;
-    private OffsetDateTime validFrom;
-    private OffsetDateTime validTo;
+    private Timestamp validFrom;
+    private Timestamp validTo;
     private Double avgRating;
     private Collection<ClientEntity> likedBy = new ArrayList<>();
     private EntertainerEntity entertainer;
@@ -50,13 +50,13 @@ public class OfferEntity extends AbstractEntity {
 
     @Basic
     @Column(name = "valid_from", nullable = false)
-    public OffsetDateTime getValidFrom() {
+    public Timestamp getValidFrom() {
         return validFrom;
     }
 
     @Basic
     @Column(name = "valid_to", nullable = false)
-    public OffsetDateTime getValidTo() {
+    public Timestamp getValidTo() {
         return validTo;
     }
 
@@ -93,8 +93,8 @@ public class OfferEntity extends AbstractEntity {
         return reservations;
     }
 
-    public OfferEntity(String title, String description, boolean isActive, OffsetDateTime validFrom,
-                       OffsetDateTime validTo, EntertainerEntity entertainer) {
+    public OfferEntity(String title, String description, boolean isActive, Timestamp validFrom,
+                       Timestamp validTo, EntertainerEntity entertainer) {
         this.title = title;
         this.description = description;
         this.isActive = isActive;

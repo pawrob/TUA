@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.OffsetDateTime;
+import java.sql.Timestamp;
 
 @Setter
 @Entity
@@ -19,7 +19,7 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SessionLogEntity extends AbstractEntity {
-    private OffsetDateTime actionTimestamp;
+    private Timestamp actionTimestamp;
     private String ipAddress;
     private boolean isSuccessful;
     private UserEntity user;
@@ -27,7 +27,7 @@ public class SessionLogEntity extends AbstractEntity {
 
     @Basic
     @Column(name = "action_timestamp", nullable = false)
-    public OffsetDateTime getActionTimestamp() {
+    public Timestamp getActionTimestamp() {
         return actionTimestamp;
     }
 

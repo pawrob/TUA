@@ -21,6 +21,8 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -171,7 +173,7 @@ public class EntertainerManager extends AbstractMokManager implements Entertaine
         personalDataEntity.setUser(user);
         personalDataEntity.setUserId(user.getId());
         user.setPersonalData(personalDataEntity);
-        user.setTokenTimestamp(OffsetDateTime.now());
+        user.setTokenTimestamp(Timestamp.from(Instant.now()));
 
         userEntityMokFacade.flush();
         buttonText = "https://studapp.it.p.lodz.pl:8405/ssbd05/#/accountConfirmation/?id=" + user.getId() + "&token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);

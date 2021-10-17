@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.json.bind.annotation.JsonbTypeAdapter;
-import java.time.OffsetDateTime;
+import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -15,8 +15,8 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 public class ReservationDTO extends AbstractDTO {
 
-    private OffsetDateTime reservationFrom;
-    private OffsetDateTime reservationTo;
+    private Timestamp reservationFrom;
+    private Timestamp reservationTo;
     private String status;
     private Integer rating;
     private String comment;
@@ -29,8 +29,8 @@ public class ReservationDTO extends AbstractDTO {
     @JsonbTypeAdapter(VersionCryptJsonbAdapter.class)
     private Long offerVersion;
 
-    public ReservationDTO(long id, Long version, OffsetDateTime reservationFrom,
-                          OffsetDateTime reservationTo, String status, Integer rating,
+    public ReservationDTO(long id, Long version, Timestamp reservationFrom,
+                          Timestamp reservationTo, String status, Integer rating,
                           String comment, long clientId, String clientLogin, long offerId, String offerTitle, long entertainer, String entertainerLogin) {
         super(id, version);
         this.reservationFrom = reservationFrom;

@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.OffsetDateTime;
+import java.sql.Timestamp;
 
 @Data
 @NoArgsConstructor
@@ -13,14 +13,14 @@ import java.time.OffsetDateTime;
 @Setter
 public class EntertainerUnavailabilityDTO extends AbstractDTO{
 
-    public EntertainerUnavailabilityDTO(long id, Long version, OffsetDateTime dateTimeFrom, OffsetDateTime dateTimeTo, String description) {
+    public EntertainerUnavailabilityDTO(long id, Long version, Timestamp dateTimeFrom, Timestamp dateTimeTo, String description) {
         super(id, version);
         this.dateTimeFrom = dateTimeFrom;
         this.dateTimeTo = dateTimeTo;
         this.description = description;
     }
 
-    private OffsetDateTime dateTimeFrom;
-    private OffsetDateTime dateTimeTo;
+    private Timestamp dateTimeFrom;
+    private Timestamp dateTimeTo;
     private String description;
 }

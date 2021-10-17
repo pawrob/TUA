@@ -34,6 +34,7 @@ Vue.use(VueSuggestion)
 
 
 Vue.filter('formatDate', function(value) {
+  console.log(value);
   if (value) {
     return moment(String(value)).format('DD/MM/YYYY HH:mm')
   }

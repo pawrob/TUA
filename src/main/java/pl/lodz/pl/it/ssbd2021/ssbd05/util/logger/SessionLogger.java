@@ -14,6 +14,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.security.enterprise.identitystore.CredentialValidationResult;
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 
 @PermitAll
@@ -69,7 +71,7 @@ public class SessionLogger {
 
         var log = new SessionLogEntity();
         log.setUser(userEntity);
-        log.setActionTimestamp(OffsetDateTime.now());
+        log.setActionTimestamp(Timestamp.from(Instant.now()));
         log.setIpAddress(request.getRemoteAddr());
         sessionLogEntityAuthFacade.create(log);
         log.setSuccessful(result.getStatus().equals(CredentialValidationResult.Status.VALID));

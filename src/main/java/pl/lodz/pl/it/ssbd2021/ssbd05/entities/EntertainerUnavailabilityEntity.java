@@ -6,7 +6,7 @@ import lombok.Setter;
 import pl.lodz.pl.it.ssbd2021.ssbd05.util.logger.EntitiesLogger;
 
 import javax.persistence.*;
-import java.time.OffsetDateTime;
+import java.sql.Timestamp;
 
 @Setter
 @Entity
@@ -15,8 +15,8 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 @EntityListeners(EntitiesLogger.class)
 public class EntertainerUnavailabilityEntity extends AbstractEntity {
-    private OffsetDateTime dateTimeFrom;
-    private OffsetDateTime dateTimeTo;
+    private Timestamp dateTimeFrom;
+    private Timestamp dateTimeTo;
     private String description;
     private boolean isValid;
     private long entertainerId;
@@ -29,13 +29,13 @@ public class EntertainerUnavailabilityEntity extends AbstractEntity {
 
     @Basic
     @Column(name = "date_time_from", nullable = false)
-    public OffsetDateTime getDateTimeFrom() {
+    public Timestamp getDateTimeFrom() {
         return dateTimeFrom;
     }
 
     @Basic
     @Column(name = "date_time_to", nullable = false)
-    public OffsetDateTime getDateTimeTo() {
+    public Timestamp getDateTimeTo() {
         return dateTimeTo;
     }
 

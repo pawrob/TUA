@@ -28,6 +28,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,8 +70,8 @@ public class EntertainerMooManager extends AbstractMooManager implements Enterta
         }
         EntertainerUnavailabilityEntity unavailabilityEntity = entertainerUnavailabilityEntityMooFacade
                 .find(unavailabilityDTO.getId());
-        unavailabilityEntity.setDateTimeFrom(unavailabilityDTO.getDateTimeFrom());
-        unavailabilityEntity.setDateTimeTo(unavailabilityDTO.getDateTimeTo());
+        unavailabilityEntity.setDateTimeFrom(Timestamp.from(unavailabilityDTO.getDateTimeFrom().toInstant()));
+        unavailabilityEntity.setDateTimeTo(Timestamp.from(unavailabilityDTO.getDateTimeTo().toInstant()));
         unavailabilityEntity.setDescription(unavailabilityDTO.getDescription());
         unavailabilityEntity.setValid(unavailabilityDTO.isValid());
         entertainerUnavailabilityEntityMooFacade.flush();

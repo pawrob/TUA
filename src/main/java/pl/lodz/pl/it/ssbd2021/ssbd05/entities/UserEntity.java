@@ -4,6 +4,7 @@ import lombok.Setter;
 import pl.lodz.pl.it.ssbd2021.ssbd05.util.logger.EntitiesLogger;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,7 +25,7 @@ public class UserEntity extends AbstractEntity {
     private boolean isActive = true;
     private boolean isVerified = false;
     private String passwordResetToken;
-    private OffsetDateTime tokenTimestamp;
+    private Timestamp tokenTimestamp;
     private int failedLogin = 0;
     private Collection<AccessLevelEntity> accessLevels = new ArrayList<>();
     private PersonalDataEntity personalData;
@@ -68,7 +69,7 @@ public class UserEntity extends AbstractEntity {
 
     @Basic
     @Column(name = "token_timestamp", nullable = false)
-    public OffsetDateTime getTokenTimestamp() {
+    public Timestamp getTokenTimestamp() {
         return tokenTimestamp;
     }
 

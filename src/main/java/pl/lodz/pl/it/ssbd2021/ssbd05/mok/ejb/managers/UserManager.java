@@ -26,6 +26,10 @@ import javax.persistence.PersistenceException;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.rmi.NotBoundException;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -144,7 +148,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
             throw InvalidTokenException.createInvalidTokenException(id);
         }
 
-        if (userEntity.getTokenTimestamp().until(OffsetDateTime.now(), ChronoUnit.HOURS) > 24) {
+        if (userEntity.getTokenTimestamp().compareTo(Timestamp.from(Instant.now().minus(24, ChronoUnit.HOURS))) < 0) {
             throw InvalidTokenException.createTokenExpiredException();
         }
 
@@ -227,7 +231,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
         if (!userEntity.getPasswordResetToken().equals(token)) {
             throw InvalidTokenException.createInvalidTokenException(id);
         }
-        if (userEntity.getTokenTimestamp().until(OffsetDateTime.now(), ChronoUnit.MINUTES) > 20) {
+        if (userEntity.getTokenTimestamp().compareTo(Timestamp.from(Instant.now().minus(20, ChronoUnit.MINUTES))) < 0) {
             throw InvalidTokenException.createTokenExpiredException();
         }
 
@@ -253,7 +257,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
     /**
      * Metoda wysyłająca wiadomość email z tokenem pozwalającym na zmiane adresu email.
      *
-     * @param id    - identyfikator uzytkownika
+     * @param login    - identyfikator uzytkownika
      * @param email - adres email przypisany do konta uzytkownika
      * @return obiekt encji uzytkownika
      * @throws AbstractAppException         abstrakcyjny wyjątek aplikacyjny
@@ -278,7 +282,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
         }
         String token = HashGenerator.generateSecureRandomToken();
         userEntity.setPasswordResetToken(token);
-        userEntity.setTokenTimestamp(OffsetDateTime.now());
+        userEntity.setTokenTimestamp(Timestamp.from(Instant.now()));
 
         buttonText = "https://studapp.it.p.lodz.pl:8405/ssbd05/#/account/change-email/confirm/" + userEntity.getId() + "/" + URLEncoder.encode(token, StandardCharsets.UTF_8) + "/" + URLEncoder.encode(email, StandardCharsets.UTF_8);
         try {
@@ -321,7 +325,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
         if (HashGenerator.checkPassword(newPassword, userEntity.getPassword())) {
             throw NewPasswordSameAsOldAppException.createNewPasswordSameAsOldAppException();
         }
-        if (userEntity.getTokenTimestamp().until(OffsetDateTime.now(), ChronoUnit.MINUTES) > 20) {
+        if (userEntity.getTokenTimestamp().compareTo(Timestamp.from(Instant.now().minus(20, ChronoUnit.MINUTES))) < 0) {
             throw InvalidTokenException.createTokenExpiredException();
         }
 
@@ -354,7 +358,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
 
         String token = HashGenerator.generateSecureRandomToken();
         userEntity.setPasswordResetToken(token);
-        userEntity.setTokenTimestamp(OffsetDateTime.now());
+        userEntity.setTokenTimestamp(Timestamp.from(Instant.now()));
 
         buttonText = "https://studapp.it.p.lodz.pl:8405/ssbd05/#/confirmresetpassword/?id=" + userEntity.getId() + "&token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
 
@@ -560,11 +564,11 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
     public void deleteUnverifiedUsers(Integer systemSchedulerHour) throws AbstractAppException {
         List<UserEntity> userEntityList = userEntityFacade.findAll();
         for (UserEntity userEntity : userEntityList) {
-            if (!userEntity.isVerified() && userEntity.getTokenTimestamp().until(OffsetDateTime.now(), ChronoUnit.HOURS) > systemSchedulerHour / 2) {
+            if (!userEntity.isVerified() && userEntity.getTokenTimestamp().compareTo(Timestamp.from(Instant.now().minus(systemSchedulerHour / 2, ChronoUnit.HOURS))) < 0) {
                 buttonText = "https://studapp.it.p.lodz.pl:8405/ssbd05/resources/user/verify/?id=" + userEntity.getId() + "&token=" + userEntity.getPasswordResetToken();
                 mailManager.createAndSendEmailFromTemplate(userEntity, "titleNearDeleteAccount", "headerTextNearDeleteAccount", buttonText, "footerTextDeleteAccount");
             }
-            if (!userEntity.isVerified() && userEntity.getTokenTimestamp().until(OffsetDateTime.now(), ChronoUnit.HOURS) >= systemSchedulerHour) {
+            if (!userEntity.isVerified() && userEntity.getTokenTimestamp().compareTo(Timestamp.from(Instant.now().minus(systemSchedulerHour, ChronoUnit.HOURS))) <= 0) {
                 buttonText = "https://studapp.it.p.lodz.pl:8405/ssbd05/#/register";
 //                personalDataEntityMokFacade.remove(userEntity.getPersonalData());
                 for (AccessLevelEntity ac : userEntity.getAccessLevels())

@@ -18,6 +18,8 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -90,7 +92,7 @@ public class ClientManager extends AbstractMokManager implements ClientManagerLo
         personalDataEntity.setUser(userEntity);
         personalDataEntity.setUserId(userEntity.getId());
         userEntity.setPersonalData(personalDataEntity);
-        userEntity.setTokenTimestamp(OffsetDateTime.now());
+        userEntity.setTokenTimestamp(Timestamp.from(Instant.now()));
 //        userEntityMokFacade.flush();
         userEntityMokFacade.refresh(userEntity);
         buttonText = "https://studapp.it.p.lodz.pl:8405/ssbd05/#/accountConfirmation/?id=" + userEntity.getId() + "&token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);

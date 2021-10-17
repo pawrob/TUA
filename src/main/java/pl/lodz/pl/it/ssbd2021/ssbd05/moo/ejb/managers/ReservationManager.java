@@ -1,10 +1,13 @@
 package pl.lodz.pl.it.ssbd2021.ssbd05.moo.ejb.managers;
 
+import pl.lodz.pl.it.ssbd2021.ssbd05.dto.OfferAvailabilityDTO;
+import pl.lodz.pl.it.ssbd2021.ssbd05.dto.ReservationDTO;
 import pl.lodz.pl.it.ssbd2021.ssbd05.dto.ReservationEditDTO;
 import pl.lodz.pl.it.ssbd2021.ssbd05.entities.*;
 import pl.lodz.pl.it.ssbd2021.ssbd05.exceptions.*;
 import pl.lodz.pl.it.ssbd2021.ssbd05.moo.ejb.facades.*;
 import pl.lodz.pl.it.ssbd2021.ssbd05.util.comparators.ReservationEditComparator;
+import pl.lodz.pl.it.ssbd2021.ssbd05.util.converters.OfferAvailabilityConverter;
 import pl.lodz.pl.it.ssbd2021.ssbd05.util.converters.ReservationConverter;
 import pl.lodz.pl.it.ssbd2021.ssbd05.util.converters.ReservationEditConverter;
 import pl.lodz.pl.it.ssbd2021.ssbd05.util.logger.EjbLoggerInterceptor;
@@ -19,8 +22,11 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import java.sql.Timestamp;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -145,11 +151,20 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
 
     private boolean validateReservationTerm(ReservationEntity reservation) {
 
+        ReservationDTO reservationDTO = ReservationConverter.reservationEntityToDTO(reservation);
+
         OfferEntity offer = reservation.getOffer();
         EntertainerEntity entertainer = offer.getEntertainer();
 
-        boolean validationResult = reservation.getReservationTo().getDayOfYear() == reservation.getReservationFrom().getDayOfYear();
-        validationResult &= reservation.getReservationTo().getYear() == reservation.getReservationFrom().getYear();
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(reservationDTO.getReservationTo().getTime());
+        int resToDayOfYear = cal.get(Calendar.DAY_OF_YEAR);
+        int resToYear = cal.get(Calendar.YEAR);
+        cal.setTimeInMillis(reservationDTO.getReservationFrom().getTime());
+        int resFromDayOfYear = cal.get(Calendar.DAY_OF_YEAR);
+        int resFromYear = cal.get(Calendar.YEAR);
+        boolean validationResult = resToDayOfYear == resFromDayOfYear;
+        validationResult &= resToYear == resFromYear;
 
         Collection<OfferAvailabilityEntity> offerAvailabilities = offer.getOfferAvailabilities();
         validationResult &= offerAvailabilities.stream().anyMatch((x) -> offerAvailabilityValidation(x, reservation));
@@ -165,8 +180,8 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
                                 reservation.getReservationFrom(), reservation.getReservationTo())
                 );
 
-        validationResult &= reservation.getReservationFrom().isAfter(offer.getValidFrom());
-        validationResult &= reservation.getReservationTo().isBefore(offer.getValidTo());
+        validationResult &= reservationDTO.getReservationFrom().compareTo(offer.getValidFrom()) > 0;
+        validationResult &= reservationDTO.getReservationTo().compareTo(offer.getValidTo()) > 0;
 
         List<ReservationEntity> allForEntertainer = reservationFacade.findAllForEntertainer(entertainer.getId());
         return validationResult && allForEntertainer
@@ -180,23 +195,50 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
                                 reservation.getReservationTo()));
     }
 
-    private boolean termsOverlap(OffsetDateTime firstBegin, OffsetDateTime firstEnds, OffsetDateTime secondBegin, OffsetDateTime secondEnds) {
-        return firstBegin.isBefore(secondEnds) && secondBegin.isBefore(firstEnds);
+    private boolean termsOverlap(Timestamp firstBegin, Timestamp firstEnds, Timestamp secondBegin, Timestamp secondEnds) {
+        return firstBegin.compareTo(secondEnds) < 0 && secondBegin.compareTo(firstEnds) < 0;
     }
 
     private static boolean offerAvailabilityValidation(OfferAvailabilityEntity offerAvailability, ReservationEntity reservation) {
-        boolean validation = offerAvailability.getHoursFrom().withOffsetSameInstant(ZoneOffset.UTC).getHour() <= reservation.getReservationFrom().withOffsetSameInstant(ZoneOffset.UTC).getHour();
-        validation &= offerAvailability.getHoursTo().withOffsetSameInstant(ZoneOffset.UTC).getHour() >= reservation.getReservationTo().withOffsetSameInstant(ZoneOffset.UTC).getHour();
-        validation &= offerAvailability.getWeekDay() == reservation.getReservationTo().getDayOfWeek().getValue() % 7;
-        validation &= offerAvailability.getWeekDay() == reservation.getReservationFrom().getDayOfWeek().getValue() % 7;
+//        OfferAvailabilityDTO offerAvailabilityDTO = OfferAvailabilityConverter.offerAvailabilityEntityToDTO(offerAvailability);
+//        ReservationDTO reservationDTO = ReservationConverter.reservationEntityToDTO(reservation);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(offerAvailability.getHoursFrom());
+        int availabilityFromHours = cal.get(Calendar.HOUR);
+        cal.setTime(reservation.getReservationFrom());
+        int reservationFromHours = cal.get(Calendar.HOUR);
+        int reservationFromDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+        cal.setTime(offerAvailability.getHoursTo());
+        int availabilityToHours = cal.get(Calendar.HOUR);
+        cal.setTime(reservation.getReservationTo());
+        int reservationToHours = cal.get(Calendar.HOUR);
+        int reservationToDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+        boolean validation = availabilityFromHours <= reservationFromHours;
+        validation &= availabilityToHours >= reservationToHours;
+        // todo sprawdzic czy 6 czy 7 to niedziela czy nawet 0 i czy sie zgadzaja
+        validation &= offerAvailability.getWeekDay() == reservationFromDayOfWeek;
+        validation &= offerAvailability.getWeekDay() == reservationToDayOfWeek;
         return validation;
     }
 
     private static boolean offerAvailabilityValidation(OfferAvailabilityEntity offerAvailability, ReservationEditDTO reservation) {
-        boolean validation = offerAvailability.getHoursFrom().withOffsetSameInstant(ZoneOffset.UTC).getHour() <= reservation.getReservationFrom().withOffsetSameInstant(ZoneOffset.UTC).getHour();
-        validation &= offerAvailability.getHoursTo().withOffsetSameInstant(ZoneOffset.UTC).getHour() >= reservation.getReservationTo().withOffsetSameInstant(ZoneOffset.UTC).getHour();
-        validation &= offerAvailability.getWeekDay() == reservation.getReservationTo().getDayOfWeek().getValue() % 7;
-        validation &= offerAvailability.getWeekDay() == reservation.getReservationFrom().getDayOfWeek().getValue() % 7;
+//        OfferAvailabilityDTO offerAvailabilityDTO = OfferAvailabilityConverter.offerAvailabilityEntityToDTO(offerAvailability);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(offerAvailability.getHoursFrom());
+        int availabilityFromHours = cal.get(Calendar.HOUR);
+        cal.setTime(reservation.getReservationFrom());
+        int reservationFromHours = cal.get(Calendar.HOUR);
+        int reservationFromDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+        cal.setTime(offerAvailability.getHoursTo());
+        int availabilityToHours = cal.get(Calendar.HOUR);
+        cal.setTime(reservation.getReservationTo());
+        int reservationToHours = cal.get(Calendar.HOUR);
+        int reservationToDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+        boolean validation = availabilityFromHours <= reservationFromHours;
+        validation &= availabilityToHours >= reservationToHours;
+        // todo sprawdzic czy 6 czy 7 to niedziela czy nawet 0 i czy sie zgadzaja
+        validation &= offerAvailability.getWeekDay() == reservationToDayOfWeek;
+        validation &= offerAvailability.getWeekDay() == reservationFromDayOfWeek;
         return validation;
     }
 
@@ -374,8 +416,8 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
         }
         try {
             ReservationEntity newReservationEntity = ReservationConverter.createEntityFromDto(ReservationConverter.reservationEntityToDTO(reservationEntity));
-            newReservationEntity.setReservationTo(reservationEditDTO.getReservationTo());
-            newReservationEntity.setReservationFrom(reservationEditDTO.getReservationFrom());
+            newReservationEntity.setReservationTo(Timestamp.from(reservationEditDTO.getReservationTo().toInstant()));
+            newReservationEntity.setReservationFrom(Timestamp.from(reservationEditDTO.getReservationFrom().toInstant()));
             var offerEntity = offerFacade.findAndRefresh(reservationEntity.getOffer().getId());
             var x = createReservation(newReservationEntity, offerEntity.getId(), offerEntity.getVersion());
             reservationEntity.setStatus(ReservationEntity.Status.CANCELED);

@@ -4,7 +4,7 @@ import lombok.Setter;
 import pl.lodz.pl.it.ssbd2021.ssbd05.util.logger.EntitiesLogger;
 
 import javax.persistence.*;
-import java.time.OffsetTime;
+import java.sql.Time;
 
 @Setter
 @Entity
@@ -12,8 +12,8 @@ import java.time.OffsetTime;
 @EntityListeners(EntitiesLogger.class)
 public class OfferAvailabilityEntity extends AbstractEntity {
     private int weekDay;
-    private OffsetTime hoursFrom;
-    private OffsetTime hoursTo;
+    private Time hoursFrom;
+    private Time hoursTo;
 
     @Basic
     @Column(name = "week_day", nullable = false)
@@ -23,13 +23,13 @@ public class OfferAvailabilityEntity extends AbstractEntity {
 
     @Basic
     @Column(name = "hours_from", nullable = false)
-    public OffsetTime getHoursFrom() {
+    public Time getHoursFrom() {
         return hoursFrom;
     }
 
     @Basic
     @Column(name = "hours_to", nullable = false)
-    public OffsetTime getHoursTo() {
+    public Time getHoursTo() {
         return hoursTo;
     }
 }
