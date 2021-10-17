@@ -30,6 +30,7 @@ import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -85,13 +86,13 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
     @Override
     @RolesAllowed({"CLIENT", "ENTERTAINER", "MANAGEMENT"})
     public UserEntity editUserData(PersonalDataEntity newData) throws AbstractAppException {
-        long id = newData.getUserId();
-        UserEntity userEntity = userEntityFacade.find(id);
+//        long id = newData.getUserId();
+        UserEntity userEntity = userEntityFacade.findByLogin(ctx.getCallerPrincipal().getName());
         if (null == userEntity)
-            throw UserNotFoundAppException.createUserWithProvidedIdNotFoundException(id);
+            throw UserNotFoundAppException.createUserWithProvidedIdNotFoundException(userEntity.getId());
         if (!userEntity.getLogin().equals(ctx.getCallerPrincipal().getName()))
             throw NotAllowedAppException.createNotAllowedException();
-        PersonalDataEntity personalDataEntity = personalDataEntityMokFacade.find(id);
+        PersonalDataEntity personalDataEntity = personalDataEntityMokFacade.find(userEntity.getId());
         if (null == personalDataEntity) {
             personalDataEntityMokFacade.create(newData);
             userEntity.setPersonalData(newData);

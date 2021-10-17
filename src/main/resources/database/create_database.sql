@@ -34,9 +34,9 @@ CREATE TABLE user
     token_timestamp      DATETIME,
     failed_login         SMALLINT              NOT NULL DEFAULT 0,
     version              BIGINT                NOT NULL DEFAULT 1,
-    CONSTRAINT user_pkey PRIMARY KEY (id),
-    CONSTRAINT user_login_key UNIQUE (login),
-    CONSTRAINT user_email_key UNIQUE (email)
+    CONSTRAINT user_pkey PRIMARY KEY (id)
+#     CONSTRAINT user_login_key UNIQUE (login),
+#     CONSTRAINT user_email_key UNIQUE (email)
 #     CONSTRAINT user_email_correctness CHECK ( email ~* '^[-!#$%&*+-/=?^_`{|}~a-z0-9]+@[a-z]+.[a-z]{2,5}$'),
 #     CONSTRAINT user_password_bcrypt_form CHECK ( password ~*
 #                                                  '^[$]2[abxy][$](?:0[4-9]|[12][0-9]|3[01])[$][./0-9a-zA-Z]{53}$'

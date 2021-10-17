@@ -408,6 +408,7 @@
                                         <connection-url>${db.jdbc.url}</connection-url>
                                         <jndi-name>java:jboss/jdbc/ssbd05adminDS</jndi-name>
                                         <enabled>true</enabled>
+                                        <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
                                         <enable>true</enable>
                                         <user-name>ssbd05admin</user-name>
                                         <password>L0dbr0k</password>
@@ -432,6 +433,7 @@
                                         <connection-url>${db.jdbc.url}</connection-url>
                                         <jndi-name>java:jboss/jdbc/ssbd05authDS</jndi-name>
                                         <enabled>true</enabled>
+                                        <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
                                         <enable>true</enable>
                                         <user-name>ssbd05auth</user-name>
                                         <password>woj@uth</password>
@@ -457,6 +459,7 @@
                                         <jndi-name>java:jboss/jdbc/ssbd05mokDS</jndi-name>
                                         <enabled>true</enabled>
                                         <enable>true</enable>
+                                        <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
                                         <user-name>ssbd05mok</user-name>
                                         <password>w1k1ngow1e</password>
                                         <driver-name>${mysql.driver.name}</driver-name>
@@ -480,6 +483,7 @@
                                         <connection-url>${db.jdbc.url}</connection-url>
                                         <jndi-name>java:jboss/jdbc/ssbd05mooDS</jndi-name>
                                         <enabled>true</enabled>
+                                        <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
                                         <enable>true</enable>
                                         <user-name>ssbd05moo</user-name>
                                         <password>w0j0wnicy</password>

@@ -13,10 +13,7 @@ import javax.annotation.Resource;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
-import javax.ejb.SessionContext;
-import javax.ejb.Stateful;
-import javax.ejb.TransactionAttribute;
-import javax.ejb.TransactionAttributeType;
+import javax.ejb.*;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import java.net.URLEncoder;
@@ -94,12 +91,10 @@ public class ClientManager extends AbstractMokManager implements ClientManagerLo
         personalDataEntity.setUserId(userEntity.getId());
         userEntity.setPersonalData(personalDataEntity);
         userEntity.setTokenTimestamp(OffsetDateTime.now());
-
-        userEntityMokFacade.flush();
+//        userEntityMokFacade.flush();
         userEntityMokFacade.refresh(userEntity);
         buttonText = "https://studapp.it.p.lodz.pl:8405/ssbd05/#/accountConfirmation/?id=" + userEntity.getId() + "&token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
         mailManager.createAndSendEmailFromTemplate(userEntity, "titleCreateAccount", "headerCreateAccount", buttonText, "footerCreateAccount");
-
         return userEntity;
     }
 
