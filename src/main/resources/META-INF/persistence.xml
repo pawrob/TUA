@@ -85,6 +85,7 @@
             <property name="eclipselink.canonicalmodel.prefix" value="mok"/>
             <property name="eclipselink.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
             <property name="eclipselink.target-server" value="JBoss"/>
+<!--            <property name="eclipselink.validate-existence" value="true"/>-->
         </properties>
     </persistence-unit>
 

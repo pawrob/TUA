@@ -59,29 +59,29 @@ public class EntitiesLogger {
     }
 
     private void createQueryLogInDatabase(QueryLogEntity logEntity) {
-        var runnables = (List<Runnable>) tsr.getResource("RUNNABLES");
-        if( runnables != null){
-            if ("moo".equals(getFunctionalModule())) {
-                runnables.add(new Runnable() {
-                    @SneakyThrows
-                    @Override
-                    public void run() {
-                        queryMooLogFacade.create(logEntity);
-                        queryMooLogFacade.flush();
-                    }
-                });
-            }
-            else {
-                runnables.add(new Runnable() {
-                    @SneakyThrows
-                    @Override
-                    public void run() {
-                        queryMokLogFacade.create(logEntity);
-                        queryMokLogFacade.flush();
-                    }
-                });
-            }
-        }
+//        var runnables = (List<Runnable>) tsr.getResource("RUNNABLES");
+//        if( runnables != null){
+//            if ("moo".equals(getFunctionalModule())) {
+//                runnables.add(new Runnable() {
+//                    @SneakyThrows
+//                    @Override
+//                    public void run() {
+//                        queryMooLogFacade.create(logEntity);
+//                        queryMooLogFacade.flush();
+//                    }
+//                });
+//            }
+//            else {
+//                runnables.add(new Runnable() {
+//                    @SneakyThrows
+//                    @Override
+//                    public void run() {
+//                        queryMokLogFacade.create(logEntity);
+//                        queryMokLogFacade.flush();
+//                    }
+//                });
+//            }
+//        }
 
     }
 
