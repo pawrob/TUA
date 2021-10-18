@@ -175,7 +175,7 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
     @Override
     public OfferEntity addOfferToFavourites(Long id) throws AbstractAppException {
         var offerEntity = offerEntityFacade.findAndRefresh(id);
-        var userEntity = userEntityMooFacade.find(ctx.getCallerPrincipal().getName());
+        var userEntity = userEntityMooFacade.findByLogin(ctx.getCallerPrincipal().getName());
         var clientEntity = clientEntityMooFacade.findByUser(userEntity);
         if (offerEntity == null) {
             throw OfferNotFoundException.createOfferWithProvidedIdNotFoundException(id);

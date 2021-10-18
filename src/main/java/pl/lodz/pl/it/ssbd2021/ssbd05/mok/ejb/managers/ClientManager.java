@@ -93,7 +93,7 @@ public class ClientManager extends AbstractMokManager implements ClientManagerLo
         personalDataEntity.setUserId(userEntity.getId());
         userEntity.setPersonalData(personalDataEntity);
         userEntity.setTokenTimestamp(Timestamp.from(Instant.now()));
-//        userEntityMokFacade.flush();
+        userEntityMokFacade.flush();
         userEntityMokFacade.refresh(userEntity);
         buttonText = "https://studapp.it.p.lodz.pl:8405/ssbd05/#/accountConfirmation/?id=" + userEntity.getId() + "&token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
         mailManager.createAndSendEmailFromTemplate(userEntity, "titleCreateAccount", "headerCreateAccount", buttonText, "footerCreateAccount");

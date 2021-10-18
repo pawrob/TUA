@@ -5,6 +5,7 @@ import pl.lodz.pl.it.ssbd2021.ssbd05.exceptions.AbstractAppException;
 import pl.lodz.pl.it.ssbd2021.ssbd05.interceptors.OptimisticLockExceptionInterceptor;
 import pl.lodz.pl.it.ssbd2021.ssbd05.interceptors.PersistenceExceptionInterceptor;
 
+import javax.annotation.security.PermitAll;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -17,6 +18,7 @@ import java.util.List;
  */
 @Stateless
 @LocalBean
+@PermitAll
 @Interceptors({PersistenceExceptionInterceptor.class, OptimisticLockExceptionInterceptor.class})
 @TransactionAttribute(TransactionAttributeType.MANDATORY)
 public class AccessLevelEntityMokFacade extends AbstractMokFacade<AccessLevelEntity> {

@@ -153,7 +153,7 @@ public class EntertainerMooManager extends AbstractMooManager implements Enterta
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed({"ENTERTAINER"})
+    @RolesAllowed("ENTERTAINER")
     public String getSelfDescription() throws AbstractAppException {
         UserEntity user = userEntityMooFacade.findByLogin(ctx.getCallerPrincipal().getName());
         EntertainerEntity entertainerEntity = null;
@@ -178,7 +178,7 @@ public class EntertainerMooManager extends AbstractMooManager implements Enterta
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed({"ENTERTAINER"})
+    @RolesAllowed("ENTERTAINER")
     public String updateDescription(String description) throws AbstractAppException {
         UserEntity user = userEntityMooFacade.findByLogin(ctx.getCallerPrincipal().getName());
         EntertainerEntity entertainerEntity = null;
