@@ -21,6 +21,8 @@ import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.TransactionSynchronizationRegistry;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -57,29 +59,29 @@ public class EntitiesLogger {
     }
 
     private void createQueryLogInDatabase(QueryLogEntity logEntity) {
-        var runnables = (List<Runnable>) tsr.getResource("RUNNABLES");
-        if( runnables != null){
-            if ("moo".equals(getFunctionalModule())) {
-                runnables.add(new Runnable() {
-                    @SneakyThrows
-                    @Override
-                    public void run() {
-                        queryMooLogFacade.create(logEntity);
-                        queryMooLogFacade.flush();
-                    }
-                });
-            }
-            else {
-                runnables.add(new Runnable() {
-                    @SneakyThrows
-                    @Override
-                    public void run() {
-                        queryMokLogFacade.create(logEntity);
-                        queryMokLogFacade.flush();
-                    }
-                });
-            }
-        }
+//        var runnables = (List<Runnable>) tsr.getResource("RUNNABLES");
+//        if( runnables != null){
+//            if ("moo".equals(getFunctionalModule())) {
+//                runnables.add(new Runnable() {
+//                    @SneakyThrows
+//                    @Override
+//                    public void run() {
+//                        queryMooLogFacade.create(logEntity);
+//                        queryMooLogFacade.flush();
+//                    }
+//                });
+//            }
+//            else {
+//                runnables.add(new Runnable() {
+//                    @SneakyThrows
+//                    @Override
+//                    public void run() {
+//                        queryMokLogFacade.create(logEntity);
+//                        queryMokLogFacade.flush();
+//                    }
+//                });
+//            }
+//        }
 
     }
 
@@ -88,7 +90,7 @@ public class EntitiesLogger {
         String query = "CREATED [" + entity.getClass().getSimpleName() + "] WITH ID [" + entity.getId() + "]";
         QueryLogEntity queryLog = new QueryLogEntity();
 
-        queryLog.setActionTimestamp(OffsetDateTime.now());
+        queryLog.setActionTimestamp(Timestamp.from(Instant.now()));
         queryLog.setQuery(query);
         queryLog.setAffectedTable(entity.getClass().getSimpleName().replace("Entity", ""));
         queryLog.setUser(getUser());
@@ -102,7 +104,7 @@ public class EntitiesLogger {
         String query = "UPDATED [" + entity.getClass().getSimpleName() + "] WITH ID [" + entity.getId() + "]";
         QueryLogEntity queryLog = new QueryLogEntity();
 
-        queryLog.setActionTimestamp(OffsetDateTime.now());
+        queryLog.setActionTimestamp(Timestamp.from(Instant.now()));
         queryLog.setQuery(query);
         queryLog.setAffectedTable(entity.getClass().getSimpleName().replace("Entity", ""));
         queryLog.setUser(getUser());
@@ -116,7 +118,7 @@ public class EntitiesLogger {
         String query = "REMOVED [" + entity.getClass().getSimpleName() + "] WITH ID [" + entity.getId() + "]";
         QueryLogEntity queryLog = new QueryLogEntity();
 
-        queryLog.setActionTimestamp(OffsetDateTime.now());
+        queryLog.setActionTimestamp(Timestamp.from(Instant.now()));
         queryLog.setQuery(query);
         queryLog.setAffectedTable(entity.getClass().getSimpleName().replace("Entity", ""));
         queryLog.setModule(getFunctionalModule());

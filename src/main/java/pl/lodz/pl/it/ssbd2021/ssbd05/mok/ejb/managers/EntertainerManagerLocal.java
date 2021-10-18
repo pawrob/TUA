@@ -13,16 +13,16 @@ import javax.interceptor.Interceptors;
 
 @Local
 public interface EntertainerManagerLocal extends ManagerLocal {
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     UserEntity deactivateEntertainerAccount(Long id) throws AbstractAppException;
 
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     UserEntity reactivateEntertainerAccount(Long id) throws AbstractAppException;
 
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     @Interceptors(PersistenceExceptionInterceptor.class)
     UserEntity createEnterainer(EntertainerEntity entertainerEntity) throws AbstractAppException;
 
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     AccessLevelEntity changeEntertainerAccessLevelStatus(Long id, boolean status) throws AbstractAppException;
 }

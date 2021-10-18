@@ -1,11 +1,13 @@
 package pl.lodz.pl.it.ssbd2021.ssbd05.dto;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 public class UserWithPersonalDataAccessLevelDTO extends UserWithAccessLevelDTO {
     private PersonalDataDTO personalData;
 

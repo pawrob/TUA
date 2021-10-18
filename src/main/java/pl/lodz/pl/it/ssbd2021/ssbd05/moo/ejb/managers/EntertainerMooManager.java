@@ -28,6 +28,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,7 +62,7 @@ public class EntertainerMooManager extends AbstractMooManager implements Enterta
     }
 
     @Override
-    @RolesAllowed("Entertainer")
+    @RolesAllowed("ENTERTAINER")
     public EntertainerUnavailabilityEntity updateUnavailability(EntertainerUnavailabilityEntireDTO unavailabilityDTO) throws AbstractAppException {
 
         if (unavailabilityDTO.getEntertainerId() != entertainerFacade.findByLogin(ctx.getCallerPrincipal().getName()).getId()) {
@@ -69,8 +70,8 @@ public class EntertainerMooManager extends AbstractMooManager implements Enterta
         }
         EntertainerUnavailabilityEntity unavailabilityEntity = entertainerUnavailabilityEntityMooFacade
                 .find(unavailabilityDTO.getId());
-        unavailabilityEntity.setDateTimeFrom(unavailabilityDTO.getDateTimeFrom());
-        unavailabilityEntity.setDateTimeTo(unavailabilityDTO.getDateTimeTo());
+        unavailabilityEntity.setDateTimeFrom(Timestamp.from(unavailabilityDTO.getDateTimeFrom().toInstant()));
+        unavailabilityEntity.setDateTimeTo(Timestamp.from(unavailabilityDTO.getDateTimeTo().toInstant()));
         unavailabilityEntity.setDescription(unavailabilityDTO.getDescription());
         unavailabilityEntity.setValid(unavailabilityDTO.isValid());
         entertainerUnavailabilityEntityMooFacade.flush();
@@ -85,7 +86,7 @@ public class EntertainerMooManager extends AbstractMooManager implements Enterta
     }
 
     @Override
-    @RolesAllowed("Entertainer")
+    @RolesAllowed("ENTERTAINER")
     public List<EntertainerUnavailabilityEntity> getMyUnavailabilities() throws AbstractAppException {
         long entertainerId = entertainerFacade.findByLogin(ctx.getCallerPrincipal().getName()).getId();
         List<EntertainerUnavailabilityEntity> unavailabilityEntities = entertainerUnavailabilityEntityMooFacade
@@ -110,7 +111,7 @@ public class EntertainerMooManager extends AbstractMooManager implements Enterta
     }
 
     @Override
-    @RolesAllowed("Entertainer")
+    @RolesAllowed("ENTERTAINER")
     public EntertainerUnavailabilityEntity createUnavailability(EntertainerUnavailabilityDTO unavailability) throws AbstractAppException {
         EntertainerEntity entertainer = entertainerFacade.findByLogin(ctx.getCallerPrincipal().getName());
         EntertainerUnavailabilityEntity unavailabilityEntity = EntertainerUnavailabilityConverter.createEntityFromDTO(
@@ -133,7 +134,7 @@ public class EntertainerMooManager extends AbstractMooManager implements Enterta
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed({"Client", "Entertainer", "Management"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER", "MANAGEMENT"})
     public String getDescription(Long id) throws AbstractAppException {
 
         EntertainerEntity entertainerEntity = entertainerFacade.findAndRefresh(id);
@@ -152,7 +153,7 @@ public class EntertainerMooManager extends AbstractMooManager implements Enterta
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed({"Entertainer"})
+    @RolesAllowed("ENTERTAINER")
     public String getSelfDescription() throws AbstractAppException {
         UserEntity user = userEntityMooFacade.findByLogin(ctx.getCallerPrincipal().getName());
         EntertainerEntity entertainerEntity = null;
@@ -177,7 +178,7 @@ public class EntertainerMooManager extends AbstractMooManager implements Enterta
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed({"Entertainer"})
+    @RolesAllowed("ENTERTAINER")
     public String updateDescription(String description) throws AbstractAppException {
         UserEntity user = userEntityMooFacade.findByLogin(ctx.getCallerPrincipal().getName());
         EntertainerEntity entertainerEntity = null;
@@ -206,7 +207,7 @@ public class EntertainerMooManager extends AbstractMooManager implements Enterta
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed({"Client", "Entertainer", "Management"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER", "MANAGEMENT"})
     public EntertainerEntity getBasicEntertainerInfo(Long id) throws AbstractAppException {
         EntertainerEntity entertainerEntity = entertainerFacade.findAndRefresh(id);
         if (entertainerEntity == null) {
@@ -225,7 +226,7 @@ public class EntertainerMooManager extends AbstractMooManager implements Enterta
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed({"Client"})
+    @RolesAllowed({"CLIENT"})
     public List<EntertainerUnavailabilityEntity> getUnavailability(Long id) throws AbstractAppException {
         EntertainerEntity entertainer = entertainerFacade.findAndRefresh(id);
         return entertainer.getEntertainerUnavailability()
@@ -241,7 +242,7 @@ public class EntertainerMooManager extends AbstractMooManager implements Enterta
     }
 
     @Override
-    @RolesAllowed("Entertainer")
+    @RolesAllowed("ENTERTAINER")
     public EntertainerUnavailabilityEntity updateUnavailabilityStatus(long id, boolean status) throws AbstractAppException {
         EntertainerUnavailabilityEntity ent = entertainerUnavailabilityEntityMooFacade.find(id);
         ent.setValid(status);

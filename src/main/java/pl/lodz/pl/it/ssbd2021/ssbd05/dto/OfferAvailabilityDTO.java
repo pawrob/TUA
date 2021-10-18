@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.OffsetTime;
+import java.sql.Time;
 
 @NoArgsConstructor
 public class OfferAvailabilityDTO extends AbstractDTO {
@@ -15,13 +15,13 @@ public class OfferAvailabilityDTO extends AbstractDTO {
 
     @Getter
     @Setter
-    private OffsetTime hoursFrom;
+    private Time hoursFrom;
 
     @Getter
     @Setter
-    private OffsetTime hoursTo;
+    private Time hoursTo;
 
-    public OfferAvailabilityDTO(long id, Long version, int weekDay, OffsetTime hoursFrom, OffsetTime hoursTo) {
+    public OfferAvailabilityDTO(long id, Long version, int weekDay, Time hoursFrom, Time hoursTo) {
         super(id, version);
         this.weekDay = weekDay;
         this.hoursFrom = hoursFrom;

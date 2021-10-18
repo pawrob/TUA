@@ -129,7 +129,6 @@ export default {
         id: '',
         rating: 0,
         comment: '',
-        valid: true,
       },
       isHovered: false,
       showLoading: false,
@@ -211,12 +210,8 @@ export default {
     setRating: function (rating) {
       this.feedback.rating = rating
     },
-    updateRating(modal) {
-      this.feedback.valid = this.feedback.comment.length <= 2048
-      if (!this.feedback.valid) {
-        modal.preventDefault()
-        return
-      }
+    updateRating() {
+
       api.put('moo/reservation/' + this.feedback.id + '/rating', this.feedback).then(() => {
         eventBus.$emit('alert', {key: 'RESERVATION_RATED', variant: 'success'})
         this.refreshReservations()

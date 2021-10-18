@@ -3,21 +3,21 @@ package pl.lodz.pl.it.ssbd2021.ssbd05.entities;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.OffsetDateTime;
+import java.sql.Timestamp;
 
 @Setter
 @Entity
-@Table(name = "query_log", schema = "public")
+@Table(name = "query_log", schema = "ssbd05")
 public class QueryLogEntity extends AbstractEntity {
-    private OffsetDateTime actionTimestamp;
+    private Timestamp actionTimestamp;
     private String query;
     private String module;
     private String affectedTable;
     private UserEntity user;
 
     @Basic
-    @Column(name = "action_timestamp", nullable = false)
-    public OffsetDateTime getActionTimestamp() {
+    @Column(name = "action_timestamp", nullable = false, columnDefinition = "datetime default CURRENT_TIMESTAMP")
+    public Timestamp getActionTimestamp() {
         return actionTimestamp;
     }
 

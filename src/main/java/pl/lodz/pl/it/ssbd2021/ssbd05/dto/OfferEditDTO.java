@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
-import java.time.OffsetDateTime;
+import java.sql.Timestamp;
 import java.util.Collection;
 
 @Getter
@@ -18,11 +18,11 @@ public class OfferEditDTO extends AbstractDTO {
     @NotBlank
     private String title;
     private String description;
-    private OffsetDateTime validFrom;
-    private OffsetDateTime validTo;
+    private Timestamp validFrom;
+    private Timestamp validTo;
     private Collection<OfferAvailabilityDTO> offerAvailabilities;
 
-    public OfferEditDTO(long id, Long version, String title, String description, OffsetDateTime validFrom, OffsetDateTime validTo) {
+    public OfferEditDTO(long id, Long version, String title, String description, Timestamp validFrom, Timestamp validTo) {
         super(id, version);
         this.title = title;
         this.description = description;

@@ -25,7 +25,7 @@ public class UserConverter {//needs version hashing somewhere
      * @param userEntity - obiekt encji uzytkownika
      * @return
      */
-    public static UserDTO userEntityToDTO(UserEntity userEntity){
+    public static UserDTO userEntityToDTO(UserEntity userEntity) {
         return new UserDTO(userEntity.getId(), userEntity.getVersion(),
                 userEntity.getLogin(), userEntity.getEmail(), userEntity.isActive(),
                 userEntity.isActive());
@@ -38,7 +38,7 @@ public class UserConverter {//needs version hashing somewhere
      * @param password - hasło uzytkownika
      * @return obiekt encji uzytkownika
      */
-    public static UserEntity createNewUserEntityFromDTO(UserDTO userDTO, String password){
+    public static UserEntity createNewUserEntityFromDTO(UserDTO userDTO, String password) {
         return new UserEntity(userDTO.getLogin(), userDTO.getEmail(), password);
     }
 
@@ -49,8 +49,8 @@ public class UserConverter {//needs version hashing somewhere
      * @param password - hasło uzytkownika
      * @return obiekt encji uzytkownika
      */
-    public static UserEntity userWithPersonalDataDTOtoEntity(UserWithPersonalDataDTO userDTO, String password){
-        UserEntity userEntity = createNewUserEntityFromDTO(userDTO,password);
+    public static UserEntity userWithPersonalDataDTOtoEntity(UserWithPersonalDataDTO userDTO, String password) {
+        UserEntity userEntity = createNewUserEntityFromDTO(userDTO, password);
         userEntity.setActive(userDTO.isActive());
         userEntity.setVerified(userDTO.isVerified());
         if (null != userDTO.getPersonalData()) {
@@ -68,7 +68,7 @@ public class UserConverter {//needs version hashing somewhere
      * @param userEntities - lista obiektow encji uzytkownikow
      * @return lista obiektow DTO uzytkownikow
      */
-    public static List<UserDTO> createUserListDTOFromEntity(Collection<UserEntity> userEntities){
+    public static List<UserDTO> createUserListDTOFromEntity(Collection<UserEntity> userEntities) {
         return null == userEntities ? null : userEntities.stream()
                 .filter(Objects::nonNull)
                 .map(UserConverter::userEntityToDTO)
@@ -82,7 +82,7 @@ public class UserConverter {//needs version hashing somewhere
      * @param userEntity - obiekt encji uzytkownika
      * @return obiekt DTO uzytkownika z poziomami dostepu
      */
-    public static UserWithAccessLevelDTO userWithAccessLevelDTOFromEntity(UserEntity userEntity){
+    public static UserWithAccessLevelDTO userWithAccessLevelDTOFromEntity(UserEntity userEntity) {
         return new UserWithAccessLevelDTO(userEntity.getId(), userEntity.getVersion(), userEntity.getLogin(),
                 userEntity.getEmail(), userEntity.isActive(), userEntity.isVerified(),
                 AccessLevelConverter.AccessLevelDTOListFromEntities(userEntity.getAccessLevels()));
@@ -94,7 +94,7 @@ public class UserConverter {//needs version hashing somewhere
      * @param userEntities
      * @return lista obiektow DTO uzytkownikow z poziomami dostepu
      */
-    public static List<UserWithAccessLevelDTO> userWithAccessLevelDTOListFromEntities(Collection<UserEntity> userEntities){
+    public static List<UserWithAccessLevelDTO> userWithAccessLevelDTOListFromEntities(Collection<UserEntity> userEntities) {
         return null == userEntities ? null : userEntities.stream()
                 .filter(Objects::nonNull)
                 .map(UserConverter::userWithAccessLevelDTOFromEntity)
@@ -121,20 +121,29 @@ public class UserConverter {//needs version hashing somewhere
 
     /**
      * Konwerter obiektu Encji na obiekt DTO uzytkownika z danymi personalnymi oraz poziomami dostępu.
+     *
      * @param userEntity
      * @return obiekt DTO uzytkownika z danymi personalnymi oraz poziomami dostępu
      */
     public static UserWithPersonalDataAccessLevelDTO userWithPersonalDataAccessLevelDTOfromEntity(UserEntity userEntity) {
-        return UserWithPersonalDataAccessLevelDTO.builder()
-                .personalData(PersonalDataConverter.personalDataDTOfromEntity(userEntity.getPersonalData()))
-                .id(userEntity.getId())
-                .version(userEntity.getVersion())
-                .login(userEntity.getLogin())
-                .email(userEntity.getEmail())
-                .isActive(userEntity.isActive())
-                .isVerified(userEntity.isVerified())
-                .accessLevels(AccessLevelConverter.AccessLevelDTOListFromEntities(
-                        userEntity.getAccessLevels()))
-                .build();
+        return new UserWithPersonalDataAccessLevelDTO(
+                userEntity.getLogin(),
+                userEntity.getEmail(),
+                userEntity.isActive(),
+                userEntity.isVerified(),
+                AccessLevelConverter.AccessLevelDTOListFromEntities(userEntity.getAccessLevels()),
+                PersonalDataConverter.personalDataDTOfromEntity(userEntity.getPersonalData()));
+
+//        return UserWithPersonalDataAccessLevelDTO.builder()
+//                .personalData(PersonalDataConverter.personalDataDTOfromEntity(userEntity.getPersonalData()))
+//                .id(userEntity.getId())
+//                .version(userEntity.getVersion())
+//                .login(userEntity.getLogin())
+//                .email(userEntity.getEmail())
+//                .isActive(userEntity.isActive())
+//                .isVerified(userEntity.isVerified())
+//                .accessLevels(AccessLevelConverter.AccessLevelDTOListFromEntities(
+//                        userEntity.getAccessLevels()))
+//                .build();
     }
 }

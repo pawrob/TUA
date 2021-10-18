@@ -24,7 +24,7 @@ public abstract class AbstractEntity {
 
     @Basic
     @Version
-    @Column(name = "version", nullable = false)
+    @Column(name = "version", nullable = false, columnDefinition = "BIGINT default 1")
     public Long getVersion() {
         return version;
     }

@@ -1,7 +1,6 @@
 package pl.lodz.pl.it.ssbd2021.ssbd05.auth.ejb.managers;
 
 import pl.lodz.pl.it.ssbd2021.ssbd05.auth.ejb.facades.AuthenticationViewEntityFacade;
-import pl.lodz.pl.it.ssbd2021.ssbd05.ejb.manager.AbstractManager;
 import pl.lodz.pl.it.ssbd2021.ssbd05.entities.AuthenticationViewEntity;
 import pl.lodz.pl.it.ssbd2021.ssbd05.exceptions.AbstractAppException;
 

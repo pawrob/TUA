@@ -1,10 +1,13 @@
 package pl.lodz.pl.it.ssbd2021.ssbd05.moo.ejb.managers;
 
+import pl.lodz.pl.it.ssbd2021.ssbd05.dto.OfferAvailabilityDTO;
+import pl.lodz.pl.it.ssbd2021.ssbd05.dto.ReservationDTO;
 import pl.lodz.pl.it.ssbd2021.ssbd05.dto.ReservationEditDTO;
 import pl.lodz.pl.it.ssbd2021.ssbd05.entities.*;
 import pl.lodz.pl.it.ssbd2021.ssbd05.exceptions.*;
 import pl.lodz.pl.it.ssbd2021.ssbd05.moo.ejb.facades.*;
 import pl.lodz.pl.it.ssbd2021.ssbd05.util.comparators.ReservationEditComparator;
+import pl.lodz.pl.it.ssbd2021.ssbd05.util.converters.OfferAvailabilityConverter;
 import pl.lodz.pl.it.ssbd2021.ssbd05.util.converters.ReservationConverter;
 import pl.lodz.pl.it.ssbd2021.ssbd05.util.converters.ReservationEditConverter;
 import pl.lodz.pl.it.ssbd2021.ssbd05.util.logger.EjbLoggerInterceptor;
@@ -19,8 +22,13 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -56,7 +64,9 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
     @Inject
     private OfferEntityMooFacade offerFacade;
 
-    /** Pobiera wszystkie rezerwacja, dostępne role "Management"
+    /**
+     * Pobiera wszystkie rezerwacja, dostępne role "Management"
+     *
      * @return listę wszystkich rezerwacji
      * @throws AbstractAppException
      */
@@ -66,19 +76,23 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
         return reservationFacade.findAllAndRefresh();
     }
 
-    /** Zwraca rezerwację zalogowanego klienta, dostępne role "Client"
+    /**
+     * Zwraca rezerwację zalogowanego klienta, dostępne role "Client"
+     *
      * @return listę rezerwacji klienta
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed({"Client"})
+    @RolesAllowed({"CLIENT"})
     public List<ReservationEntity> getSelfReservations() throws AbstractAppException {
         var userEntity = userEntityMooFacade.findByLogin(ctx.getCallerPrincipal().getName());
         var clientEntity = clientEntityMooFacade.findByUser(userEntity);
         return reservationFacade.findReservationByClient(clientEntity);
     }
 
-    /** Zwraca pojedyńczą rezerwację po id, dostępne role: wszystkie
+    /**
+     * Zwraca pojedyńczą rezerwację po id, dostępne role: wszystkie
+     *
      * @param id id rezerwacji do wyświetlenia
      * @return rezerwację o podanym id
      * @throws AbstractAppException
@@ -92,8 +106,9 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
         }
         return reservationEntity;
     }
+
     @Override
-    @RolesAllowed({"Entertainer"})
+    @RolesAllowed({"ENTERTAINER"})
     public ReservationEntity endReservation(Long id) throws AbstractAppException {
         EntertainerEntity myself = entertainerFacade.findByLogin(ctx.getCallerPrincipal().getName());
         ReservationEntity reservation = reservationFacade.findForEntertainer(id, myself.getId());
@@ -106,15 +121,17 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
     }
 
 
-    /** Tworzy nową rezerwację, dostępne role: "Client"
-     * @param reservation szczegóły rezerwacji
-     * @param offerId id oferty której tyczy się rezerwacja
+    /**
+     * Tworzy nową rezerwację, dostępne role: "Client"
+     *
+     * @param reservation  szczegóły rezerwacji
+     * @param offerId      id oferty której tyczy się rezerwacja
      * @param offerVersion wersja oferty
      * @return
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed({"Client"})
+    @RolesAllowed({"CLIENT"})
     public ReservationEntity createReservation(ReservationEntity reservation, Long offerId, Long offerVersion) throws AbstractAppException {
         reservationAssignment(reservation, offerId, offerVersion, ctx.getCallerPrincipal().getName());
         entertainerFacade.lockPessimisticRead(reservation.getOffer().getEntertainer());
@@ -145,11 +162,20 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
 
     private boolean validateReservationTerm(ReservationEntity reservation) {
 
+        ReservationDTO reservationDTO = ReservationConverter.reservationEntityToDTO(reservation);
+
         OfferEntity offer = reservation.getOffer();
         EntertainerEntity entertainer = offer.getEntertainer();
 
-        boolean validationResult = reservation.getReservationTo().getDayOfYear() == reservation.getReservationFrom().getDayOfYear();
-        validationResult &= reservation.getReservationTo().getYear() == reservation.getReservationFrom().getYear();
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(reservationDTO.getReservationTo().getTime());
+        int resToDayOfYear = cal.get(Calendar.DAY_OF_YEAR);
+        int resToYear = cal.get(Calendar.YEAR);
+        cal.setTimeInMillis(reservationDTO.getReservationFrom().getTime());
+        int resFromDayOfYear = cal.get(Calendar.DAY_OF_YEAR);
+        int resFromYear = cal.get(Calendar.YEAR);
+        boolean validationResult = resToDayOfYear == resFromDayOfYear;
+        validationResult &= resToYear == resFromYear;
 
         Collection<OfferAvailabilityEntity> offerAvailabilities = offer.getOfferAvailabilities();
         validationResult &= offerAvailabilities.stream().anyMatch((x) -> offerAvailabilityValidation(x, reservation));
@@ -165,8 +191,8 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
                                 reservation.getReservationFrom(), reservation.getReservationTo())
                 );
 
-        validationResult &= reservation.getReservationFrom().isAfter(offer.getValidFrom());
-        validationResult &= reservation.getReservationTo().isBefore(offer.getValidTo());
+        validationResult &= reservationDTO.getReservationFrom().compareTo(offer.getValidFrom()) > 0;
+        validationResult &= reservationDTO.getReservationTo().compareTo(offer.getValidTo()) < 0;
 
         List<ReservationEntity> allForEntertainer = reservationFacade.findAllForEntertainer(entertainer.getId());
         return validationResult && allForEntertainer
@@ -180,40 +206,69 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
                                 reservation.getReservationTo()));
     }
 
-    private boolean termsOverlap(OffsetDateTime firstBegin, OffsetDateTime firstEnds, OffsetDateTime secondBegin, OffsetDateTime secondEnds) {
-        return firstBegin.isBefore(secondEnds) && secondBegin.isBefore(firstEnds);
+    private boolean termsOverlap(Timestamp firstBegin, Timestamp firstEnds, Timestamp secondBegin, Timestamp secondEnds) {
+        return firstBegin.compareTo(secondEnds) < 0 && secondBegin.compareTo(firstEnds) < 0;
     }
 
     private static boolean offerAvailabilityValidation(OfferAvailabilityEntity offerAvailability, ReservationEntity reservation) {
-        boolean validation = offerAvailability.getHoursFrom().withOffsetSameInstant(ZoneOffset.UTC).getHour() <= reservation.getReservationFrom().withOffsetSameInstant(ZoneOffset.UTC).getHour();
-        validation &= offerAvailability.getHoursTo().withOffsetSameInstant(ZoneOffset.UTC).getHour() >= reservation.getReservationTo().withOffsetSameInstant(ZoneOffset.UTC).getHour();
-        validation &= offerAvailability.getWeekDay() == reservation.getReservationTo().getDayOfWeek().getValue() % 7;
-        validation &= offerAvailability.getWeekDay() == reservation.getReservationFrom().getDayOfWeek().getValue() % 7;
+        final Calendar cal = Calendar.getInstance();
+        cal.setTime(reservation.getReservationFrom());
+        final int reservationFromDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+        cal.setTime(reservation.getReservationTo());
+        int reservationToDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        final String reservationFromTimeStr = sdf.format(reservation.getReservationFrom()) + ":00";
+        final String reservationToTimeStr = sdf.format(reservation.getReservationTo()) + ":00";
+        final String offerAvailabilityFromTimeStr = sdf.format(offerAvailability.getHoursFrom()) + ":00";
+        final String offerAvailabilityToTimeStr = sdf.format(offerAvailability.getHoursTo()) + ":00";
+
+        final Time offerAvailabilityFromTime = Time.valueOf(offerAvailabilityFromTimeStr);
+        final Time offerAvailabilityToTime = Time.valueOf(offerAvailabilityToTimeStr);
+        final Time reservationFromTime = Time.valueOf(reservationFromTimeStr);
+        final Time reservationToTime = Time.valueOf(reservationToTimeStr);
+
+        boolean validation = offerAvailabilityFromTime.compareTo(reservationFromTime) <= 0;
+        validation &= offerAvailabilityToTime.compareTo(reservationToTime) >= 0;
+        validation &= offerAvailability.getWeekDay() + 1 == reservationFromDayOfWeek;
+        validation &= offerAvailability.getWeekDay() + 1 == reservationToDayOfWeek;
         return validation;
     }
 
     private static boolean offerAvailabilityValidation(OfferAvailabilityEntity offerAvailability, ReservationEditDTO reservation) {
-        boolean validation = offerAvailability.getHoursFrom().withOffsetSameInstant(ZoneOffset.UTC).getHour() <= reservation.getReservationFrom().withOffsetSameInstant(ZoneOffset.UTC).getHour();
-        validation &= offerAvailability.getHoursTo().withOffsetSameInstant(ZoneOffset.UTC).getHour() >= reservation.getReservationTo().withOffsetSameInstant(ZoneOffset.UTC).getHour();
-        validation &= offerAvailability.getWeekDay() == reservation.getReservationTo().getDayOfWeek().getValue() % 7;
-        validation &= offerAvailability.getWeekDay() == reservation.getReservationFrom().getDayOfWeek().getValue() % 7;
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(offerAvailability.getHoursFrom());
+        int availabilityFromHours = cal.get(Calendar.HOUR);
+        cal.setTime(reservation.getReservationFrom());
+        int reservationFromHours = cal.get(Calendar.HOUR);
+        int reservationFromDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+        cal.setTime(offerAvailability.getHoursTo());
+        int availabilityToHours = cal.get(Calendar.HOUR);
+        cal.setTime(reservation.getReservationTo());
+        int reservationToHours = cal.get(Calendar.HOUR);
+        int reservationToDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+        boolean validation = availabilityFromHours <= reservationFromHours;
+        validation &= availabilityToHours >= reservationToHours;
+        validation &= offerAvailability.getWeekDay() == reservationToDayOfWeek;
+        validation &= offerAvailability.getWeekDay() == reservationFromDayOfWeek;
         return validation;
     }
 
-//    TODO: javadoc
     @Override
     public ReservationEntity updateReservation(Long id, ReservationEntity newReservation) {
         throw new UnsupportedOperationException();
     }
 
 
-    /** Akceptacja rezerwacji przez PDR, dostępne role: "Entertainer"
+    /**
+     * Akceptacja rezerwacji przez PDR, dostępne role: "Entertainer"
+     *
      * @param id id rezerwacji
      * @return Zaakceptowaną rezerwację
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed({"Entertainer"})
+    @RolesAllowed({"ENTERTAINER"})
     public ReservationEntity acceptReservation(Long id) throws AbstractAppException {
         EntertainerEntity myself = entertainerFacade.findByLogin(ctx.getCallerPrincipal().getName());
         ReservationEntity reservation = reservationFacade.findForEntertainer(id, myself.getId());
@@ -229,15 +284,15 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
     /**
      * Metoda managera pozwalająca na modyfikację oceny i komentarza do danej rezerwacji
      *
-     * @param id - identyfikator rezerwacji
-     * @param rating - ocena
+     * @param id      - identyfikator rezerwacji
+     * @param rating  - ocena
      * @param comment - komentarz
      * @return encja rezerwacji po zmianie
      * @throws ReservationNotFoundAppException - wyjątek rzucany w przypadku nie znalezienia rezerwacji po danym identyfikatorze
-     * @throws NotAllowedAppException - wyjątek rzucany w przypadku braku uprawnień
+     * @throws NotAllowedAppException          - wyjątek rzucany w przypadku braku uprawnień
      */
     @Override
-    @RolesAllowed({"Client"})
+    @RolesAllowed({"CLIENT"})
     public ReservationEntity updateRating(Long id, int rating, String comment) throws AbstractAppException {
         ReservationEntity reservationEntity = reservationFacade.findAndRefresh(id);
         if (reservationEntity == null) {
@@ -263,10 +318,10 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
      * @param id - identyfikator rezerwacji
      * @return encja rezerwacji po zmianie
      * @throws ReservationNotFoundAppException - wyjątek rzucany w przypadku nie znalezienia rezerwacji po danym identyfikatorze
-     * @throws NotAllowedAppException - wyjątek rzucany w przypadku braku uprawnień
+     * @throws NotAllowedAppException          - wyjątek rzucany w przypadku braku uprawnień
      */
     @Override
-    @RolesAllowed({"Client"})
+    @RolesAllowed({"CLIENT"})
     public ReservationEntity deleteRatingByClient(Long id) throws AbstractAppException {
         ReservationEntity reservationEntity = reservationFacade.findAndRefresh(id);
         if (reservationEntity == null) {
@@ -292,10 +347,10 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
      * @param id - identyfikator rezerwacji
      * @return encja rezerwacji po zmianie
      * @throws ReservationNotFoundAppException - wyjątek rzucany w przypadku nie znalezienia rezerwacji po danym identyfikatorze
-     * @throws NotAllowedAppException - wyjątek rzucany w przypadku braku uprawnień
+     * @throws NotAllowedAppException          - wyjątek rzucany w przypadku braku uprawnień
      */
     @Override
-    @RolesAllowed({"Management"})
+    @RolesAllowed({"MANAGEMENT"})
     public ReservationEntity deleteRatingByManagement(Long id) throws AbstractAppException {
         ReservationEntity reservationEntity = reservationFacade.findAndRefresh(id);
         if (reservationEntity == null) {
@@ -330,25 +385,29 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
         entertainer.setAvgRating(averageEntertainer.isPresent() ? averageEntertainer.getAsDouble() : null);
     }
 
-    /** Zwraca wszystkie rezerwacje zalogowanego PDR, dostępne role: "Entertainer"
+    /**
+     * Zwraca wszystkie rezerwacje zalogowanego PDR, dostępne role: "Entertainer"
+     *
      * @return liste rezerwacji pdr
      */
     @Override
-    @RolesAllowed({"Entertainer"})
+    @RolesAllowed({"ENTERTAINER"})
     public List<ReservationEntity> getAllReservationsForEntertainer() {
         EntertainerEntity myself = entertainerFacade.findByLogin(ctx.getCallerPrincipal().getName());
         return reservationFacade.findAllForEntertainer(myself.getId());
     }
 
 
-    /** Edycja rezerwacji przez klienta, dostępne role: "Client"
-     * @param id id rezerwacji
+    /**
+     * Edycja rezerwacji przez klienta, dostępne role: "Client"
+     *
+     * @param id                 id rezerwacji
      * @param reservationEditDTO szczególy zmian rezerwacji
      * @return zmienioną rezerwację
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed({"Client"})
+    @RolesAllowed({"CLIENT"})
     public ReservationEntity editReservation(Long id, ReservationEditDTO reservationEditDTO) throws AbstractAppException {
         ReservationEntity reservationEntity = reservationFacade.findAndRefresh(id);
 
@@ -374,8 +433,8 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
         }
         try {
             ReservationEntity newReservationEntity = ReservationConverter.createEntityFromDto(ReservationConverter.reservationEntityToDTO(reservationEntity));
-            newReservationEntity.setReservationTo(reservationEditDTO.getReservationTo());
-            newReservationEntity.setReservationFrom(reservationEditDTO.getReservationFrom());
+            newReservationEntity.setReservationTo(Timestamp.from(reservationEditDTO.getReservationTo().toInstant()));
+            newReservationEntity.setReservationFrom(Timestamp.from(reservationEditDTO.getReservationFrom().toInstant()));
             var offerEntity = offerFacade.findAndRefresh(reservationEntity.getOffer().getId());
             var x = createReservation(newReservationEntity, offerEntity.getId(), offerEntity.getVersion());
             reservationEntity.setStatus(ReservationEntity.Status.CANCELED);
@@ -383,6 +442,7 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
         } catch (AbstractAppException abstractAppException) {
             throw abstractAppException;
         }
+        // to nic :)
         /*System.out.println(reservationEditDTO == null ? "reservationEditDTO null" : reservationEditDTO.toString());
         System.out.println(reservationEditDTO.getReservationTo() == null ? " getReservationTonull" : reservationEditDTO.getReservationTo().toString());
         System.out.println(reservationEditDTO.getReservationFrom() == null ? " getReservationFromnull" : reservationEditDTO.getReservationFrom().toString());
@@ -435,13 +495,15 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
         return reservationFacade.findAndRefresh(id);*/
     }
 
-    /** Wycofywanie rezerwacji przez klienta, dostępne role: "Client"
+    /**
+     * Wycofywanie rezerwacji przez klienta, dostępne role: "Client"
+     *
      * @param id id rezerwacji
      * @return zwraca wycofaną rezerwację
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed("Client")
+    @RolesAllowed("CLIENT")
     public ReservationEntity clientCancelReservation(Long id) throws AbstractAppException {
         var clientEntity = clientEntityMooFacade.findByLogin(ctx.getCallerPrincipal().getName());
 
@@ -458,13 +520,15 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
     }
 
 
-    /** Wycofywanie rezerwacji przez PDR, dostępne role: "Entertainer"
+    /**
+     * Wycofywanie rezerwacji przez PDR, dostępne role: "Entertainer"
+     *
      * @param id id rezerwacji
      * @return Wycofaną rezerwację
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed("Entertainer")
+    @RolesAllowed("ENTERTAINER")
     public ReservationEntity entertainerCancelReservation(Long id) throws AbstractAppException {
         var entertainerEntity = entertainerFacade.findByLogin(ctx.getCallerPrincipal().getName());
 

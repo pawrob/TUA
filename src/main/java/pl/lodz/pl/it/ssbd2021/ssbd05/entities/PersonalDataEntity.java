@@ -11,7 +11,7 @@ import javax.persistence.*;
         @NamedQuery(name = "PersonalDataEntity.findByNameOrSurname", query = "SELECT p FROM PersonalDataEntity p WHERE LOWER(p.name) LIKE LOWER(:name) or LOWER(p.surname) LIKE LOWER(:name)")
 })
 @Entity
-@Table(name = "personal_data", schema = "public")
+@Table(name = "personal_data", schema = "ssbd05")
 public class PersonalDataEntity {
     private long userId;
     private long version;
@@ -32,7 +32,7 @@ public class PersonalDataEntity {
 
     @Basic
     @Version
-    @Column(name = "version", nullable = false)
+    @Column(name = "version", nullable = false, columnDefinition = "BIGINT default 1")
     public long getVersion() {
         return version;
     }
@@ -57,7 +57,7 @@ public class PersonalDataEntity {
     }
 
     @Basic
-    @Column(name = "language", nullable = false, length = 3)
+    @Column(name = "language", nullable = false, length = 3, columnDefinition = "varchar(3) default 'PL'")
     public String getLanguage() {
         return language;
     }

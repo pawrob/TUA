@@ -4,6 +4,7 @@ import lombok.Setter;
 import pl.lodz.pl.it.ssbd2021.ssbd05.util.logger.EntitiesLogger;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,7 +12,7 @@ import java.util.Collection;
 
 @Setter
 @Entity
-@Table(name = "user", schema = "public")
+@Table(name = "user", schema = "ssbd05")
 @NamedQueries({
         @NamedQuery(name = "UserEntity.findByEmail", query = "SELECT k FROM UserEntity k WHERE k.email = :email"),
         @NamedQuery(name = "UserEntity.findByLogin", query = "SELECT k FROM UserEntity k WHERE k.login = :login")
@@ -24,7 +25,7 @@ public class UserEntity extends AbstractEntity {
     private boolean isActive = true;
     private boolean isVerified = false;
     private String passwordResetToken;
-    private OffsetDateTime tokenTimestamp;
+    private Timestamp tokenTimestamp;
     private int failedLogin = 0;
     private Collection<AccessLevelEntity> accessLevels = new ArrayList<>();
     private PersonalDataEntity personalData;
@@ -49,7 +50,7 @@ public class UserEntity extends AbstractEntity {
     }
 
     @Basic
-    @Column(name = "is_active", nullable = false)//, columnDefinition = "boolean default true")
+    @Column(name = "is_active", nullable = false, columnDefinition = "boolean default true")//, columnDefinition = "boolean default true")
     public boolean isActive() {
         return isActive;
     }
@@ -67,13 +68,13 @@ public class UserEntity extends AbstractEntity {
     }
 
     @Basic
-    @Column(name = "token_timestamp", nullable = false)
-    public OffsetDateTime getTokenTimestamp() {
+    @Column(name = "token_timestamp")
+    public Timestamp getTokenTimestamp() {
         return tokenTimestamp;
     }
 
     @Basic
-    @Column(name = "failed_login", nullable = false)
+    @Column(name = "failed_login", nullable = false, columnDefinition = "integer default 0")
     public int getFailedLogin() {
         return failedLogin;
     }

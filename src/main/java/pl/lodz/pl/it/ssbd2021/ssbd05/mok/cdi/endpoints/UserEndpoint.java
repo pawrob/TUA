@@ -54,7 +54,7 @@ public class UserEndpoint extends AbstractEndpoint {
     }
 
     @GET
-    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(APPLICATION_JSON)
     @Path("self")
     public Response getSelfUser() throws AbstractAppException {
         try {

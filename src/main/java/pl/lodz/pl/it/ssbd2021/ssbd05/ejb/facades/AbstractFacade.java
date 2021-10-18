@@ -3,6 +3,7 @@ package pl.lodz.pl.it.ssbd2021.ssbd05.ejb.facades;
 import pl.lodz.pl.it.ssbd2021.ssbd05.exceptions.AbstractAppException;
 import pl.lodz.pl.it.ssbd2021.ssbd05.interceptors.PersistenceExceptionInterceptor;
 
+import javax.annotation.security.PermitAll;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -15,6 +16,7 @@ import java.util.List;
 /**
  * Klasa abstrakcyjna reprezentująca fasadę gromadzącą funkcjonalności zarządzania encjami
  */
+@PermitAll
 @Interceptors(PersistenceExceptionInterceptor.class)
 public abstract class AbstractFacade<T> {
     private final Class<T> entityClass;

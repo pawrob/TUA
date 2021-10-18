@@ -3,19 +3,19 @@ package pl.lodz.pl.it.ssbd2021.ssbd05.entities;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.OffsetDateTime;
+import java.sql.Timestamp;
 
 @Setter
 @Entity
-@Table(name = "access_level_change_log", schema = "public")
+@Table(name = "access_level_change_log", schema = "ssbd05")
 public class AccessLevelChangeLogEntity extends AbstractEntity {
-    private OffsetDateTime actionTimestamp;
+    private Timestamp actionTimestamp;
     private String accessLevel;
     private UserEntity user;
 
     @Basic
     @Column(name = "action_timestamp", nullable = false)
-    public OffsetDateTime getActionTimestamp() {
+    public Timestamp getActionTimestamp() {
         return actionTimestamp;
     }
 

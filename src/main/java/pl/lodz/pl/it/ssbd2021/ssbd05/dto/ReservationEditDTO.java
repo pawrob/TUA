@@ -6,18 +6,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.OffsetDateTime;
+import java.sql.Timestamp;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReservationEditDTO extends AbstractDTO {
-    private OffsetDateTime reservationFrom;
-    private OffsetDateTime reservationTo;
+    private Timestamp reservationFrom;
+    private Timestamp reservationTo;
 
-    public ReservationEditDTO(long id, Long version, OffsetDateTime reservationFrom,
-                              OffsetDateTime reservationTo,
+    public ReservationEditDTO(long id, Long version, Timestamp reservationFrom,
+                              Timestamp reservationTo,
                               String comment) {
         super(id, version);
         this.reservationFrom = reservationFrom;

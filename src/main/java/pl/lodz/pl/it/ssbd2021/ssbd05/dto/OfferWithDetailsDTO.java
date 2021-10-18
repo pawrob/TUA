@@ -6,7 +6,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.OffsetDateTime;
+import java.sql.Timestamp;
 import java.util.Collection;
 
 @Getter
@@ -22,11 +22,9 @@ public class OfferWithDetailsDTO extends AbstractDTO {
     @NotNull
     private boolean isActive;
 
-    @NotBlank
-    private OffsetDateTime validFrom;
+    private Timestamp validFrom;
 
-    @NotBlank
-    private OffsetDateTime validTo;
+    private Timestamp validTo;
 
     private Double avgRating;
 
@@ -40,8 +38,8 @@ public class OfferWithDetailsDTO extends AbstractDTO {
 
 
     public OfferWithDetailsDTO(long id, Long version, @NotBlank String title, String description,
-                               @NotBlank @NotNull boolean isActive, @NotBlank OffsetDateTime validFrom,
-                               @NotBlank OffsetDateTime validTo, Double avgRating, Collection<ClientDTO> likedBy, EntertainerDTO entertainer,
+                               @NotBlank @NotNull boolean isActive, Timestamp validFrom,
+                               Timestamp validTo, Double avgRating, Collection<ClientDTO> likedBy, EntertainerDTO entertainer,
                                Collection<OfferAvailabilityDTO> offerAvailabilities, Collection<ReservationDTO> reservations) {
         super(id, version);
         this.title = title;

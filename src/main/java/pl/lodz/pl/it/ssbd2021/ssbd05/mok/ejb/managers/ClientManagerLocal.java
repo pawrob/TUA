@@ -14,9 +14,9 @@ public interface ClientManagerLocal extends ManagerLocal {
     @PermitAll
     UserEntity createUserAccountWithAccessLevel(UserEntity userEntity, AccessLevelEntity accessLevel) throws AbstractAppException;
 
-    @RolesAllowed({"Client", "Management"})
+    @RolesAllowed({"CLIENT", "MANAGEMENT"})
     void deleteUser(String login, String password) throws AbstractAppException;
 
-    @RolesAllowed({"Entertainer"})
+    @RolesAllowed({"ENTERTAINER"})
     UserEntity getClientInfo(Long id) throws AbstractAppException;
 }

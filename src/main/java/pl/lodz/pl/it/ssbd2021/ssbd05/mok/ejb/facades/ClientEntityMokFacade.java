@@ -29,7 +29,7 @@ public class ClientEntityMokFacade extends AbstractMokFacade<ClientEntity> {
         super(ClientEntity.class);
     }
 
-    @RolesAllowed({"Entertainer"})
+    @RolesAllowed({"ENTERTAINER"})
     public ClientEntity findByUserId(Long id){
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Object> cq = getEntityManager().getCriteriaBuilder().createQuery();

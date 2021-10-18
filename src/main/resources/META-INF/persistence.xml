@@ -5,7 +5,7 @@
 
     <persistence-unit name="ssbd05adminPU" transaction-type="JTA">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-        <jta-data-source>java:app/jdbc/ssbd05adminDS</jta-data-source>
+        <jta-data-source>java:jboss/jdbc/ssbd05adminDS</jta-data-source>
 
         <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.UserEntity</class>
         <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.PersonalDataEntity</class>
@@ -32,13 +32,14 @@
             <property name="eclipselink.logging.level" value="FINE"/>
             <property name="eclipselink.logging.parameters" value="true"/>
             <property name="javax.persistence.schema-generation.database.action" value="none"/>
-            <property name="eclipselink.jdbc.driver" value="org.postgresql.Driver"/>
+            <property name="eclipselink.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
+            <property name="eclipselink.target-server" value="JBoss"/>
         </properties>
     </persistence-unit>
 
     <persistence-unit name="ssbd05authPU" transaction-type="JTA">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-        <jta-data-source>java:app/jdbc/ssbd05authDS</jta-data-source>
+        <jta-data-source>java:jboss/jdbc/ssbd05authDS</jta-data-source>
         <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.UserEntity</class>
         <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.PersonalDataEntity</class>
         <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.AuthenticationViewEntity</class>
@@ -55,13 +56,14 @@
             <property name="eclipselink.logging.level" value="FINE"/>
             <property name="eclipselink.logging.parameters" value="true"/>
             <property name="eclipselink.canonicalmodel.prefix" value="auth"/>
-            <property name="eclipselink.jdbc.driver" value="org.postgresql.Driver"/>
+            <property name="eclipselink.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
+            <property name="eclipselink.target-server" value="JBoss"/>
         </properties>
     </persistence-unit>
 
     <persistence-unit name="ssbd05mokPU" transaction-type="JTA">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-        <jta-data-source>java:app/jdbc/ssbd05mokDS</jta-data-source>
+        <jta-data-source>java:jboss/jdbc/ssbd05mokDS</jta-data-source>
 
         <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.UserEntity</class>
         <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.PersonalDataEntity</class>
@@ -81,13 +83,15 @@
             <property name="eclipselink.logging.level" value="FINE"/>
             <property name="eclipselink.logging.parameters" value="true"/>
             <property name="eclipselink.canonicalmodel.prefix" value="mok"/>
-            <property name="eclipselink.jdbc.driver" value="org.postgresql.Driver"/>
+            <property name="eclipselink.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
+            <property name="eclipselink.target-server" value="JBoss"/>
+<!--            <property name="eclipselink.validate-existence" value="true"/>-->
         </properties>
     </persistence-unit>
 
     <persistence-unit name="ssbd05mooPU" transaction-type="JTA">
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
-        <jta-data-source>java:app/jdbc/ssbd05mooDS</jta-data-source>
+        <jta-data-source>java:jboss/jdbc/ssbd05mooDS</jta-data-source>
 
         <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.UserEntity</class>
         <class>pl.lodz.pl.it.ssbd2021.ssbd05.entities.PersonalDataEntity</class>
@@ -112,7 +116,8 @@
             <property name="eclipselink.logging.level" value="FINE"/>
             <property name="eclipselink.logging.parameters" value="true"/>
             <property name="eclipselink.canonicalmodel.prefix" value="moo"/>
-            <property name="eclipselink.jdbc.driver" value="org.postgresql.Driver"/>
+            <property name="eclipselink.jdbc.driver" value="org.mariadb.jdbc.Driver"/>
+            <property name="eclipselink.target-server" value="JBoss"/>
         </properties>
     </persistence-unit>
 

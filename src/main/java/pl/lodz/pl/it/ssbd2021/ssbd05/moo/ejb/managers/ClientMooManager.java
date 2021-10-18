@@ -23,7 +23,7 @@ public class ClientMooManager extends AbstractMooManager implements ClientMooMan
     ClientEntityMooFacade clientFacade;
 
     @Override
-    @RolesAllowed({"Client"})
+    @RolesAllowed({"CLIENT"})
     public ClientEntity getClient(Long id) throws AbstractAppException {
         return clientFacade.find(id);
     }

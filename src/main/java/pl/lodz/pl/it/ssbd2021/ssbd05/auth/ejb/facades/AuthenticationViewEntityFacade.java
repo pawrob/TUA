@@ -7,6 +7,7 @@ import pl.lodz.pl.it.ssbd2021.ssbd05.exceptions.IncorrectCredentialsAppException
 import pl.lodz.pl.it.ssbd2021.ssbd05.interceptors.PersistenceExceptionInterceptor;
 import pl.lodz.pl.it.ssbd2021.ssbd05.util.HashGenerator;
 
+import javax.annotation.security.PermitAll;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -41,6 +42,7 @@ public class AuthenticationViewEntityFacade extends AbstractAuthFacade<Authentic
      * @throws IncorrectCredentialsAppException
      * @throws DatabaseErrorAppException
      */
+    @PermitAll
     public List<AuthenticationViewEntity> findByLoginAndPassword(String login, String password) throws IncorrectCredentialsAppException, DatabaseErrorAppException {
         List<AuthenticationViewEntity> users = new ArrayList<>();
         CriteriaBuilder cb = getEntityManager().getCriteriaBuilder();

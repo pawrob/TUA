@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.OffsetDateTime;
+import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -20,9 +20,9 @@ public class OfferToCreateDTO extends AbstractDTO {
 
     private boolean isActive;
 
-    private OffsetDateTime validFrom;
+    private Timestamp validFrom;
 
-    private OffsetDateTime validTo;
+    private Timestamp validTo;
 
 
 }

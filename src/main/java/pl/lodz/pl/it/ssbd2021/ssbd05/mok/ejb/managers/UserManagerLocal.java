@@ -15,7 +15,7 @@ import java.util.List;
 
 @Local
 public interface UserManagerLocal extends ManagerLocal {
-    @RolesAllowed({"Client", "Entertainer", "Management"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER", "MANAGEMENT"})
     UserEntity editUserData(PersonalDataEntity newData) throws AbstractAppException;
 
     @PermitAll
@@ -24,15 +24,15 @@ public interface UserManagerLocal extends ManagerLocal {
     @PermitAll
     UserEntity verifyUser(long id, String token) throws AbstractAppException;
 
-    @RolesAllowed({"Client", "Entertainer", "Management"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER", "MANAGEMENT"})
     UserEntity changePassword(String oldPassword, String newPassword) throws
             AbstractAppException;
 
-    @RolesAllowed({"Client", "Entertainer", "Management"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER", "MANAGEMENT"})
     UserEntity changeEmail(long id, String token, String email) throws
             AbstractAppException;
 
-    @RolesAllowed({"Client", "Entertainer", "Management"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER", "MANAGEMENT"})
     UserEntity requestChangeEmail(String login, String email) throws
             AbstractAppException;
 
@@ -44,30 +44,30 @@ public interface UserManagerLocal extends ManagerLocal {
     UserEntity requestResetPassword(String email) throws
             AbstractAppException;
 
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     UserEntity activateUserAccount(Long id) throws AbstractAppException;
 
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     UserEntity deactivateUserAccount(Long id) throws AbstractAppException;
 
-    //    @RolesAllowed("Management")
+    //    @RolesAllowed("MANAGEMENT")
     @PermitAll
     List<UserEntity> getAllUsers() throws AbstractAppException;
 
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     List<UserEntity> getUserByPieceOfData(String query) throws AbstractAppException;
 
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     UserEntity getUser(Long id) throws AbstractAppException;
 
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     List<UserEntity> getUsersByPage(Long pageNumber) throws AbstractAppException;
 
     //todo: Zamienic AccessLevelDTO na AccessLevelEntity!
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     UserEntity changePrivileges(Long id, List<AccessLevelDTO> accessLevelDTOList) throws AbstractAppException;
 
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     void deleteUser(Long id) throws AbstractAppException;
 
     @PermitAll
@@ -76,7 +76,7 @@ public interface UserManagerLocal extends ManagerLocal {
     @PermitAll
     void deleteUnverifiedUsers(Integer systemSchedulerHour) throws AbstractAppException;
 
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     AccessLevelEntity changeAccessLevelStatus(Long id, boolean status) throws AbstractAppException;
 
     @PermitAll

@@ -5,11 +5,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.time.OffsetDateTime;
+import java.sql.Timestamp;
 
 @Setter
 @Entity
-@Table(name = "session_log", schema = "public")
+@Table(name = "session_log", schema = "ssbd05")
 @NamedQueries({
         @NamedQuery(name = "UserEntity.lastFailedLogin", query = "SELECT  k FROM SessionLogEntity k WHERE k.user.id = :id " +
                 "AND k.successful = false ORDER BY k.actionTimestamp desc"),
@@ -19,7 +19,7 @@ import java.time.OffsetDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SessionLogEntity extends AbstractEntity {
-    private OffsetDateTime actionTimestamp;
+    private Timestamp actionTimestamp;
     private String ipAddress;
     private boolean isSuccessful;
     private UserEntity user;
@@ -27,7 +27,7 @@ public class SessionLogEntity extends AbstractEntity {
 
     @Basic
     @Column(name = "action_timestamp", nullable = false)
-    public OffsetDateTime getActionTimestamp() {
+    public Timestamp getActionTimestamp() {
         return actionTimestamp;
     }
 

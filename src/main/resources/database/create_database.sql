@@ -1,419 +1,311 @@
 -- czesc skryptu usuwajaca stare struktury, jezeli takowe istnieja
-DROP VIEW IF EXISTS public.authentication_view;
+DROP VIEW IF EXISTS ssbd05.authentication_view;
 
-DROP TABLE IF EXISTS public.favourites;
-DROP TABLE IF EXISTS public.reservation;
-DROP TABLE IF EXISTS public.offer_availability;
-DROP TABLE IF EXISTS public.offer;
+DROP TABLE IF EXISTS ssbd05.favourites;
+DROP TABLE IF EXISTS ssbd05.reservation;
+DROP TABLE IF EXISTS ssbd05.offer_availability;
+DROP TABLE IF EXISTS ssbd05.offer;
 
-DROP TABLE IF EXISTS public.access_level_change_log;
-DROP TABLE IF EXISTS public.session_log;
-DROP TABLE IF EXISTS public.query_log;
+DROP TABLE IF EXISTS ssbd05.access_level_change_log;
+DROP TABLE IF EXISTS ssbd05.session_log;
+DROP TABLE IF EXISTS ssbd05.query_log;
 
-DROP TABLE IF EXISTS public.entertainer_unavailability;
+DROP TABLE IF EXISTS ssbd05.entertainer_unavailability;
 
-DROP TABLE IF EXISTS public.client;
-DROP TABLE IF EXISTS public.management;
-DROP TABLE IF EXISTS public.entertainer;
-DROP TABLE IF EXISTS public.access_level;
+DROP TABLE IF EXISTS ssbd05.client;
+DROP TABLE IF EXISTS ssbd05.management;
+DROP TABLE IF EXISTS ssbd05.entertainer;
+DROP TABLE IF EXISTS ssbd05.access_level;
 
-DROP TABLE IF EXISTS public.personal_data;
-DROP TABLE IF EXISTS public."user";
+DROP TABLE IF EXISTS ssbd05.personal_data;
+DROP TABLE IF EXISTS ssbd05.user;
 
--- reprezentuje konto uzytkownika
-CREATE TABLE public."user"
+
+CREATE TABLE user
 (
--- klucz glowny identyfikujacy rekord w tabeli
-    id                   BIGSERIAL             NOT NULL,
--- login identyfikujacy konto uzytkownika w aplikacji
+
+    id                   BIGINT             NOT NULL auto_increment,
     login                CHARACTER VARYING(16) NOT NULL,
--- wynik uzycia funkcji Bcrypt na hasle
     password             CHARACTER(60)         NOT NULL,
--- adres email do kontaktu
     email                CHARACTER VARYING(64) NOT NULL,
--- czy konto jest niezablokowane
     is_active            BOOLEAN               NOT NULL DEFAULT TRUE,
--- czy adres email zostal zweryfikowany
     is_verified          BOOLEAN               NOT NULL DEFAULT FALSE,
--- zeton wysylany na adres email przy resetowaniu hasla
     password_reset_token CHARACTER(64),
--- czas wystawienia tokenu
-    token_timestamp      TIMESTAMP WITH TIME ZONE,
---  ilosc blednych prob logowania
+    token_timestamp      DATETIME,
     failed_login         SMALLINT              NOT NULL DEFAULT 0,
--- wersja uzywana do blokad optymistycznych
     version              BIGINT                NOT NULL DEFAULT 1,
-    CONSTRAINT user_pkey PRIMARY KEY (id),
-    CONSTRAINT user_login_key UNIQUE (login),
-    CONSTRAINT user_email_key UNIQUE (email),
-    CONSTRAINT user_email_correctness CHECK ( email ~* '^[-!#$%&*+-/=?^_`{|}~a-z0-9]+@[a-z]+.[a-z]{2,5}$'
-        ),
-    CONSTRAINT user_password_bcrypt_form CHECK ( password ~*
-                                                 '^[$]2[abxy][$](?:0[4-9]|[12][0-9]|3[01])[$][./0-9a-zA-Z]{53}$'
-        )
+    CONSTRAINT user_pkey PRIMARY KEY (id)
+#     CONSTRAINT user_login_key UNIQUE (login),
+#     CONSTRAINT user_email_key UNIQUE (email)
+#     CONSTRAINT user_email_correctness CHECK ( email ~* '^[-!#$%&*+-/=?^_`{|}~a-z0-9]+@[a-z]+.[a-z]{2,5}$'),
+#     CONSTRAINT user_password_bcrypt_form CHECK ( password ~*
+#                                                  '^[$]2[abxy][$](?:0[4-9]|[12][0-9]|3[01])[$][./0-9a-zA-Z]{53}$'
+#         )
 );
 
-ALTER TABLE public."user"
-    OWNER TO ssbd05admin;
+GRANT ALL PRIVILEGES ON ssbd05.user TO 'ssbd05admin'@'%';
 
 
--- reprezentuje dane osobowe uzytkownika
-CREATE TABLE public.personal_data
+CREATE TABLE personal_data
 (
--- klucz glowny i jednoczesnie klucz obcy odnoszacy się do rekordu z tabeli user
     user_id      BIGINT               NOT NULL,
--- imie uzytkownika
     name         CHARACTER VARYING(30),
--- nazwisko uzytkownika
     surname      CHARACTER VARYING(30),
--- numer telefonu
     phone_number CHARACTER VARYING(15),
--- plec
     is_man       BOOLEAN,
--- preferowany jezyk aplikacji
     language     CHARACTER VARYING(3) NOT NULL DEFAULT 'PL',
--- wersja uzywana do blokad optymistycznych
     version      BIGINT               NOT NULL DEFAULT 1,
-    CONSTRAINT phone_number_correctness CHECK ( phone_number ~ '^[+]?[-\s0-9]{9,15}$'
-        ),
-    CONSTRAINT name_correctness CHECK ( name ~* '^[a-z\sżźćńółęąś]+$' ),
-    CONSTRAINT surname_correctness CHECK ( surname ~* '^[a-z\sżźćńółęąś]+$' ),
+
     CONSTRAINT personal_data_pkey PRIMARY KEY (user_id),
     CONSTRAINT personal_data_user_id_fkey FOREIGN KEY (user_id)
-        REFERENCES public."user" (id) MATCH SIMPLE
+        REFERENCES ssbd05.user (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
+#     CONSTRAINT phone_number_correctness CHECK ( phone_number ~ '^[+]?[-\s0-9]{9,15}$'),
+#     CONSTRAINT name_correctness CHECK ( name ~* '^[a-z\sżźćńółęąś]+$' ),
+#     CONSTRAINT surname_correctness CHECK ( surname ~* '^[a-z\sżźćńółęąś]+$' )
 );
 
-ALTER TABLE public.personal_data
-    OWNER TO ssbd05admin;
+GRANT ALL PRIVILEGES ON ssbd05.personal_data TO 'ssbd05admin'@'%';
 
 
--- reprezentuje poziomy dostępu dostepne dla danego uzytkownika
-CREATE TABLE public.access_level
+CREATE TABLE access_level
 (
--- klucz glowny identyfikujacy rekord w tabeli
-    id           BIGSERIAL             NOT NULL,
--- klucz obcy odnoszacy się do rekordu z tabeli user
+    id           BIGINT             NOT NULL auto_increment,
     user_id      BIGINT                NOT NULL,
--- wyroznik poziomu dostępu
     access_level CHARACTER VARYING(16) NOT NULL,
--- czy poziom jest niezablokowany
     is_active    BOOLEAN               NOT NULL DEFAULT TRUE,
--- wersja uzywana do blokad optymistycznych
     version      BIGINT                NOT NULL DEFAULT 1,
     CONSTRAINT access_level_correctness CHECK ( access_level.access_level IN ('ENTERTAINER', 'CLIENT', 'MANAGEMENT')),
     CONSTRAINT access_level_pkey PRIMARY KEY (id),
     CONSTRAINT access_level_user_id_access_level_key UNIQUE (user_id, access_level),
     CONSTRAINT access_level_user_id_fkey FOREIGN KEY (user_id)
-        REFERENCES public."user" (id) MATCH SIMPLE
+        REFERENCES ssbd05.user (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 );
 
-ALTER TABLE public.access_level
-    OWNER TO ssbd05admin;
+GRANT ALL PRIVILEGES ON ssbd05.access_level TO 'ssbd05admin'@'%';
 
 
--- zawiera dane specyficzne dla poziomu dostepu pracownik dzialu rozrywki
-CREATE TABLE public.entertainer
+CREATE TABLE entertainer
 (
--- klucz glowny, bedący kluczem obcym odnoszacym się do rekordu w tabeli public_access
     access_level_id BIGINT NOT NULL,
--- opis w profilu widoczny dla innych uzytkowników
     description     CHARACTER VARYING(2048),
--- srednia ocena pracownika przez klientow
     avg_rating      DOUBLE PRECISION,
--- wersja uzywana do blokad optymistycznych
     version         BIGINT NOT NULL DEFAULT 1,
     CONSTRAINT entertainer_pkey PRIMARY KEY (access_level_id),
     CONSTRAINT entertainer_access_level_id_fkey FOREIGN KEY (access_level_id)
-        REFERENCES public.access_level (id) MATCH SIMPLE
+        REFERENCES ssbd05.access_level (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 );
 
-ALTER TABLE public.entertainer
-    OWNER TO ssbd05admin;
+GRANT ALL PRIVILEGES ON ssbd05.entertainer TO 'ssbd05admin'@'%';
 
 
--- zawiera dane specyficzne dla poziomu dostepu zarząd
-CREATE TABLE public.management
+
+CREATE TABLE management
 (
--- klucz glowny, bedący kluczem obcym odnoszącym sie do rekordu w tabeli public_access
     access_level_id BIGINT NOT NULL,
--- wersja uzywana do blokad optymistycznych
     version         BIGINT NOT NULL DEFAULT 1,
     CONSTRAINT management_pkey PRIMARY KEY (access_level_id),
     CONSTRAINT management_access_level_id_fkey FOREIGN KEY (access_level_id)
-        REFERENCES public.access_level (id) MATCH SIMPLE
+        REFERENCES ssbd05.access_level (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 );
 
-ALTER TABLE public.management
-    OWNER TO ssbd05admin;
+GRANT ALL PRIVILEGES ON ssbd05.management TO 'ssbd05admin'@'%';
 
 
--- zawiera dane specyficzne dla poziomu dostepu klient
-CREATE TABLE public.client
+CREATE TABLE client
 (
--- klucz glowny, bedący kluczem obcym odnoszacym się do rekordu w tabeli public_access
     access_level_id BIGINT NOT NULL,
--- wersja uzywana do blokad optymistycznych
     version         BIGINT NOT NULL DEFAULT 1,
     CONSTRAINT client_pkey PRIMARY KEY (access_level_id),
     CONSTRAINT client_access_level_id_fkey FOREIGN KEY (access_level_id)
-        REFERENCES public.access_level (id) MATCH SIMPLE
+        REFERENCES ssbd05.access_level (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 );
 
-ALTER TABLE public.client
-    OWNER TO ssbd05admin;
+GRANT ALL PRIVILEGES ON ssbd05.client TO 'ssbd05admin'@'%';
 
 
--- zawiera niedysponowalnosci pracownika dzialu rozrywki
-CREATE TABLE public.entertainer_unavailability
+CREATE TABLE entertainer_unavailability
 (
--- klucz glowny identyfikujacy rekord w tabeli
-    id             BIGSERIAL                NOT NULL,
--- klucz obcy odnoszacy się do rekordu w tabeli entertainer
+    id             BIGINT                NOT NULL auto_increment,
     entertainer_id BIGINT                   NOT NULL,
--- poczatek niedysponowalnosci pracownika
-    date_time_from TIMESTAMP WITH TIME ZONE NOT NULL,
--- koniec niedysponowalnosci pracownika
-    date_time_to   TIMESTAMP WITH TIME ZONE NOT NULL,
--- opcjonalny opis (na przyklad powod nieobecnosci)
+    date_time_from DATETIME NOT NULL,
+    date_time_to   DATETIME NOT NULL,
     description    CHARACTER VARYING(350),
--- czy niedysponowalnosc jest wazna
     is_valid       BOOLEAN                  NOT NULL DEFAULT TRUE,
--- wersja uzywana do blokad optymistycznych
     version        BIGINT                   NOT NULL DEFAULT 1,
     CONSTRAINT entertainer_unavailability_pkey PRIMARY KEY (id),
     CONSTRAINT entertainer_unavailability_entertainer_id_fkey FOREIGN KEY (entertainer_id)
-        REFERENCES public.entertainer (access_level_id) MATCH SIMPLE
+        REFERENCES ssbd05.entertainer (access_level_id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
     CONSTRAINT entertainer_unavailability_date_check CHECK (date_time_from < date_time_to)
 );
 
-ALTER TABLE public.entertainer_unavailability
-    OWNER TO ssbd05admin;
+GRANT ALL PRIVILEGES ON ssbd05.entertainer_unavailability TO 'ssbd05admin'@'%';
 
 
--- dziennik zdarzen dotyczacy polecen bazodanowych
-CREATE TABLE public.query_log
+CREATE TABLE query_log
 (
--- klucz glowny identyfikujacy rekord w tabeli
-    id               BIGSERIAL                NOT NULL,
--- identyfikator uzytkownika, ktory spowodowal polecenie
+    id               BIGINT                NOT NULL auto_increment,
     user_id          BIGINT,
--- identyfikator czasowy zdarzenia
-    action_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
--- zawartosc polecenia
+    action_timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     query            CHARACTER VARYING(512)   NOT NULL,
--- modul zwiazany z danym poleceniem
     module           CHARACTER VARYING(64)    NOT NULL,
--- tabela, ktorej polecenie to dotyczylo
     affected_table   CHARACTER VARYING(64),
--- wersja uzywana do blokad optymistycznych
     version          BIGINT                   NOT NULL DEFAULT 1,
     CONSTRAINT module_correctness CHECK ( module IN ('mok', 'moo', 'auth')
         ),
     CONSTRAINT query_log_pkey PRIMARY KEY (id),
     CONSTRAINT query_log_user_id_fkey FOREIGN KEY (user_id)
-        REFERENCES public."user" (id) MATCH SIMPLE
+        REFERENCES ssbd05.user (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 );
 
-ALTER TABLE public.query_log
-    OWNER TO ssbd05admin;
+
+GRANT ALL PRIVILEGES ON ssbd05.query_log TO 'ssbd05admin'@'%';
 
 
--- dziennik zdarzen dotyczacy logowania sie uzytkownika
-CREATE TABLE public.session_log
+CREATE TABLE session_log
 (
--- klucz glowny identyfikujacy rekord w tabeli
-    id               BIGSERIAL                NOT NULL,
--- identyfikator uzytkownika, ktory probował sie zalogowac
+    id               BIGINT                NOT NULL auto_increment,
     user_id          BIGINT,
--- znacznik czasowy zdarzenia
-    action_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
--- adres logiczny, z którego uzytkownik sie logował
+    action_timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ip_address       CHARACTER VARYING(15)    NOT NULL,
--- czy proba logowania byla pomyslna
     is_successful    BOOLEAN                  NOT NULL,
--- wersja uzywana do blokad optymistycznych
     version          BIGINT                   NOT NULL DEFAULT 1,
-    CONSTRAINT ip_address_correctness CHECK (ip_address ~
-                                             '^(([0-2]?[0-9]?[0-9])?\s?([.]||[:])){3,7}([0-2]?[0-9]?[0-9])?\s?$'
-        ),
+#     CONSTRAINT ip_address_correctness CHECK (ip_address ~
+#                                              '^(([0-2]?[0-9]?[0-9])?\s?([.]||[:])){3,7}([0-2]?[0-9]?[0-9])?\s?$'
+#         ),
     CONSTRAINT session_log_pkey PRIMARY KEY (id),
     CONSTRAINT session_log_user_id_fkey FOREIGN KEY (user_id)
-        REFERENCES public."user" (id) MATCH SIMPLE
+        REFERENCES ssbd05.user (id) MATCH SIMPLE
         ON UPDATE NO ACTION
 );
 
-ALTER TABLE public.session_log
-    OWNER TO ssbd05admin;
+GRANT ALL PRIVILEGES ON ssbd05.session_log TO 'ssbd05admin'@'%';
 
 
--- dziennik zdarzen dotyczacy zmiany poziomu dostepu
-CREATE TABLE public.access_level_change_log
+CREATE TABLE access_level_change_log
 (
--- klucz glowny identyfikujacy rekord w tabeli
-    id               BIGSERIAL                NOT NULL,
--- identyfikator uzytkownika, ktory zmienial poziom dostepu
+    id               BIGINT                NOT NULL auto_increment,
     user_id          BIGINT                   NOT NULL,
--- identyfikator czasowy zdarzenia
-    action_timestamp TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
--- docelowy poziom dostepu
+    action_timestamp DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     access_level     CHARACTER VARYING(15)    NOT NULL,
--- wersja uzywana do blokad optymistycznych
     version          BIGINT                   NOT NULL DEFAULT 1,
     CONSTRAINT access_level_change_log_pkey PRIMARY KEY (id),
     CONSTRAINT access_level_change_log_fkey FOREIGN KEY (user_id)
-        REFERENCES public."user" (id) MATCH SIMPLE
+        REFERENCES ssbd05.user (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 );
 
-ALTER TABLE public.access_level_change_log
-    OWNER TO ssbd05admin;
+GRANT ALL PRIVILEGES ON ssbd05.access_level_change_log TO 'ssbd05admin'@'%';
 
 
--- zawiera oferty udostepniane przez pracownika dzialu rozrywki
-CREATE TABLE public.offer
+CREATE TABLE offer
 (
--- klucz glowny identyfikujacy rekord w tabeli
-    id             BIGSERIAL                NOT NULL,
--- identyfikator pracownika dzialu rozrywki
+    id             BIGINT                NOT NULL auto_increment,
     entertainer_id BIGINT                   NOT NULL,
--- tytul oferty
     title          CHARACTER VARYING(100)   NOT NULL,
--- opis oferty
     description    CHARACTER VARYING(350),
--- czy oferta jest niezablokowana
     is_active      BOOLEAN                  NOT NULL DEFAULT TRUE,
--- poczatek dostepności oferty
-    valid_from     TIMESTAMP WITH TIME ZONE NOT NULL,
--- koniec dostepności oferty
-    valid_to       TIMESTAMP WITH TIME ZONE NOT NULL,
--- srednia ocena oferty przez klientow
+    valid_from     DATETIME NOT NULL,
+    valid_to       DATETIME NOT NULL,
     avg_rating     DOUBLE PRECISION,
--- wersja uzywana do blokad optymistycznych
     version        BIGINT                   NOT NULL DEFAULT 1,
     CONSTRAINT offer_pkey PRIMARY KEY (id),
     CONSTRAINT offer_entertainer_id_fkey FOREIGN KEY (entertainer_id)
-        REFERENCES public.entertainer (access_level_id) MATCH SIMPLE
+        REFERENCES ssbd05.entertainer (access_level_id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
     CONSTRAINT offer_date_check CHECK (valid_from < valid_to)
 );
 
-ALTER TABLE public.offer
-    OWNER TO ssbd05admin;
+GRANT ALL PRIVILEGES ON ssbd05.offer TO 'ssbd05admin'@'%';
 
 
--- dostepnosci oferty w ciagu tygodnia
-CREATE TABLE public.offer_availability
+CREATE TABLE offer_availability
 (
--- klucz glowny identyfikujacy rekord w tabeli
-    id         BIGSERIAL           NOT NULL,
--- identyfikator oferty
+    id         BIGINT           NOT NULL auto_increment,
     offer_id   BIGINT              NOT NULL,
--- dzien tygodnia
     week_day   INTEGER             NOT NULL,
--- poczatek godzin dostepnosci
-    hours_from TIME WITH TIME ZONE NOT NULL,
--- koniec godzin dostępnosci
-    hours_to   TIME WITH TIME ZONE NOT NULL,
--- wersja uzywana do blokad optymistycznych
+    hours_from TIME NOT NULL,
+    hours_to   TIME NOT NULL,
     version    BIGINT              NOT NULL DEFAULT 1,
     CONSTRAINT offer_availability_pkey PRIMARY KEY (id),
     CONSTRAINT offer_availability_offer_id_fkey FOREIGN KEY (offer_id)
-        REFERENCES public.offer (id) MATCH SIMPLE
+        REFERENCES ssbd05.offer (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
     CONSTRAINT week_day_check CHECK (week_day >= 0 AND week_day <= 6)
 );
 
-ALTER TABLE public.offer_availability
-    OWNER TO ssbd05admin;
+GRANT ALL PRIVILEGES ON ssbd05.offer_availability TO 'ssbd05admin'@'%';
 
 
--- reprezentuje rezerwacje ofert przez klientow
-CREATE TABLE public.reservation
+CREATE TABLE reservation
 (
--- klucz glowny identyfikujacy rekord w tabeli
-    id               BIGSERIAL                NOT NULL,
--- identyfikator klienta
+    id               BIGINT                NOT NULL auto_increment,
     client_id        BIGINT                   NOT NULL,
--- identyfikator oferty
     offer_id         BIGINT                   NOT NULL,
--- poczatek rezerwacji
-    reservation_from TIMESTAMP WITH TIME ZONE NOT NULL,
--- koniec rezerwacji
-    reservation_to   TIMESTAMP WITH TIME ZONE NOT NULL,
--- status rezerwacji
+    reservation_from DATETIME NOT NULL,
+    reservation_to   DATETIME NOT NULL,
     status           CHARACTER VARYING(20),
--- ocena zakonczonej rezerwacji przez klienta
     rating           INTEGER,
--- komentarz klienta do oceny
     comment          CHARACTER VARYING(250),
--- wersja uzywana do blokad optymistycznych
     version          BIGINT                   NOT NULL DEFAULT 1,
     CONSTRAINT reservation_pkey PRIMARY KEY (id),
     CONSTRAINT reservation_client_id_fkey FOREIGN KEY (client_id)
-        REFERENCES public.client (access_level_id) MATCH SIMPLE
+        REFERENCES ssbd05.client (access_level_id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
     CONSTRAINT reservation_offer_id_fkey FOREIGN KEY (offer_id)
-        REFERENCES public.offer (id) MATCH SIMPLE
+        REFERENCES ssbd05.offer (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
     CONSTRAINT reservation_date_check CHECK (reservation_from < reservation_to)
 );
 
-ALTER TABLE public.reservation
-    OWNER TO ssbd05admin;
+GRANT ALL PRIVILEGES ON ssbd05.reservation TO 'ssbd05admin'@'%';
 
 
--- ulubione oferty klienta
-CREATE TABLE public.favourites
+CREATE TABLE favourites
 (
--- identyfikator klienta
     client_id BIGINT NOT NULL,
--- identyfikator oferty
     offer_id  BIGINT NOT NULL,
--- wersja uzywana do blokad optymistycznych
     version   BIGINT NOT NULL DEFAULT 1,
--- kluczem glównym jest para identyfikator klienta i identyfikator oferty
     CONSTRAINT favourites_pkey PRIMARY KEY (client_id, offer_id),
     CONSTRAINT favourites_client_id_fkey FOREIGN KEY (client_id)
-        REFERENCES public.client (access_level_id) MATCH SIMPLE
+        REFERENCES ssbd05.client (access_level_id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION,
     CONSTRAINT favourites_offer_id_fkey FOREIGN KEY (offer_id)
-        REFERENCES public.offer (id) MATCH SIMPLE
+        REFERENCES ssbd05.offer (id) MATCH SIMPLE
         ON UPDATE NO ACTION
         ON DELETE NO ACTION
 );
 
-ALTER TABLE public.favourites
-    OWNER TO ssbd05admin;
+GRANT ALL PRIVILEGES ON ssbd05.favourites TO 'ssbd05admin'@'%';
 
 
 -- widok laczący uzytkownikow, z przypisanymi im poziomami dostepow
-CREATE OR REPLACE VIEW public.authentication_view
+CREATE OR REPLACE VIEW authentication_view
 AS
 SELECT al.id,
        u.login,
        u.password,
        al.access_level
-FROM public."user" u
+FROM ssbd05.user u
          JOIN access_level al
               ON u.id = al.user_id
 WHERE u.is_active
@@ -421,165 +313,132 @@ WHERE u.is_active
   AND u.password_reset_token IS NULL
   AND al.is_active;
 
-ALTER TABLE public.authentication_view
-    OWNER TO ssbd05admin;
-
-
+GRANT ALL PRIVILEGES ON ssbd05.authentication_view TO 'ssbd05admin'@'%';
 -- uprawnienia dla uzytkowników bazodanowych do poszczegolnych tabel
-GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE public.access_level TO ssbd05mok;
-GRANT SELECT, UPDATE ON TABLE public.access_level TO ssbd05moo;
-GRANT SELECT ON TABLE public.authentication_view TO ssbd05auth;
-GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE public."user" TO ssbd05mok;
-GRANT SELECT ON TABLE public."user" TO ssbd05moo;
-GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE public.session_log TO ssbd05mok;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.reservation TO ssbd05moo;
-GRANT INSERT ON TABLE public.query_log TO ssbd05moo;
-GRANT INSERT ON TABLE public.query_log TO ssbd05mok;
-GRANT INSERT, UPDATE, SELECT, DELETE ON TABLE public.personal_data TO ssbd05mok;
-GRANT SELECT ON TABLE public.personal_data TO ssbd05moo;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.offer_availability TO ssbd05moo;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.offer TO ssbd05moo;
-GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE public.management TO ssbd05mok;
-GRANT SELECT ON TABLE public.management TO ssbd05moo;
-GRANT INSERT, SELECT, DELETE ON TABLE public.favourites TO ssbd05moo;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.entertainer_unavailability TO ssbd05moo;
-GRANT SELECT, UPDATE, DELETE ON TABLE public.entertainer_unavailability TO ssbd05mok;
-GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE public.entertainer TO ssbd05mok;
-GRANT INSERT, SELECT, UPDATE ON TABLE public.entertainer TO ssbd05moo;
-GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE public.client TO ssbd05mok;
-GRANT SELECT ON TABLE public.client TO ssbd05moo;
-GRANT INSERT ON TABLE public.access_level_change_log TO ssbd05mok;
+GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE ssbd05.access_level TO 'ssbd05mok'@'%';
+GRANT SELECT, UPDATE ON TABLE ssbd05.access_level TO 'ssbd05moo'@'%';
+GRANT SELECT ON TABLE ssbd05.authentication_view TO 'ssbd05auth'@'%';
+GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE ssbd05.user TO 'ssbd05mok'@'%';
+GRANT SELECT ON TABLE ssbd05.user TO 'ssbd05moo'@'%';
+GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE ssbd05.session_log TO 'ssbd05mok'@'%';
+GRANT INSERT, SELECT, UPDATE ON TABLE ssbd05.reservation TO 'ssbd05moo'@'%';
+GRANT INSERT ON TABLE ssbd05.query_log TO 'ssbd05moo'@'%';
+GRANT INSERT ON TABLE ssbd05.query_log TO 'ssbd05mok'@'%';
+GRANT INSERT, UPDATE, SELECT, DELETE ON TABLE ssbd05.personal_data TO 'ssbd05mok'@'%';
+GRANT SELECT ON TABLE ssbd05.personal_data TO 'ssbd05moo'@'%';
+GRANT INSERT, SELECT, UPDATE ON TABLE ssbd05.offer_availability TO 'ssbd05moo'@'%';
+GRANT INSERT, SELECT, UPDATE ON TABLE ssbd05.offer TO 'ssbd05moo'@'%';
+GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE ssbd05.management TO 'ssbd05mok'@'%';
+GRANT SELECT ON TABLE ssbd05.management TO 'ssbd05moo'@'%';
+GRANT INSERT, SELECT, DELETE ON TABLE ssbd05.favourites TO 'ssbd05moo'@'%';
+GRANT INSERT, SELECT, UPDATE ON TABLE ssbd05.entertainer_unavailability TO 'ssbd05moo'@'%';
+GRANT SELECT, UPDATE, DELETE ON TABLE ssbd05.entertainer_unavailability TO 'ssbd05mok'@'%';
+GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE ssbd05.entertainer TO 'ssbd05mok'@'%';
+GRANT INSERT, SELECT, UPDATE ON TABLE ssbd05.entertainer TO 'ssbd05moo'@'%';
+GRANT INSERT, SELECT, UPDATE, DELETE ON TABLE ssbd05.client TO 'ssbd05mok'@'%';
+GRANT SELECT ON TABLE ssbd05.client TO 'ssbd05moo'@'%';
+GRANT INSERT ON TABLE ssbd05.access_level_change_log TO 'ssbd05mok'@'%';
 
---uprawnienia do poszczegolnych sekwencji
-GRANT USAGE ON SEQUENCE public.access_level_change_log_id_seq TO ssbd05mok;
-GRANT USAGE ON SEQUENCE public.entertainer_unavailability_id_seq TO ssbd05moo;
-GRANT USAGE ON SEQUENCE public.offer_id_seq TO ssbd05moo;
-GRANT USAGE ON SEQUENCE public.offer_availability_id_seq TO ssbd05moo;
-GRANT USAGE ON SEQUENCE public.query_log_id_seq TO ssbd05moo;
-GRANT USAGE ON SEQUENCE public.query_log_id_seq TO ssbd05mok;
-GRANT USAGE ON SEQUENCE public.reservation_id_seq TO ssbd05moo;
-GRANT USAGE ON SEQUENCE public.session_log_id_seq TO ssbd05mok;
-GRANT USAGE ON SEQUENCE public.session_log_id_seq TO ssbd05auth;
-GRANT USAGE ON SEQUENCE public.user_id_seq TO ssbd05mok;
-GRANT USAGE ON SEQUENCE public.access_level_id_seq TO ssbd05mok;
+# -- uprawnienia do poszczegolnych sekwencji
+# GRANT USAGE ON SEQUENCE ssbd05.access_level_change_log_id_seq TO ssbd05mok;
+# GRANT USAGE ON SEQUENCE public.entertainer_unavailability_id_seq TO ssbd05moo;
+# GRANT USAGE ON SEQUENCE public.offer_id_seq TO ssbd05moo;
+# GRANT USAGE ON SEQUENCE public.offer_availability_id_seq TO ssbd05moo;
+# GRANT USAGE ON SEQUENCE public.query_log_id_seq TO ssbd05moo;
+# GRANT USAGE ON SEQUENCE public.query_log_id_seq TO ssbd05mok;
+# GRANT USAGE ON SEQUENCE public.reservation_id_seq TO ssbd05moo;
+# GRANT USAGE ON SEQUENCE public.session_log_id_seq TO ssbd05mok;
+# GRANT USAGE ON SEQUENCE public.session_log_id_seq TO ssbd05auth;
+# GRANT USAGE ON SEQUENCE public.user_id_seq TO ssbd05mok;
+# GRANT USAGE ON SEQUENCE public.access_level_id_seq TO ssbd05mok;
 
---indeksy dla kluczy obcych
+-- indeksy dla kluczy obcych
 DROP
-    INDEX IF EXISTS personal_data_user_id;
+    INDEX IF EXISTS personal_data_user_id on personal_data;
 CREATE
     INDEX personal_data_user_id
-    ON public.personal_data USING btree
-        (user_id ASC NULLS LAST)
-    TABLESPACE pg_default;
+    ON personal_data(user_id);
 
 DROP
-    INDEX IF EXISTS query_log_user_id;
+    INDEX IF EXISTS query_log_user_id on query_log;
 CREATE
     INDEX query_log_user_id
-    ON public.query_log USING btree
-        (user_id ASC NULLS LAST)
-    TABLESPACE pg_default;
+    ON query_log(user_id);
 
 DROP
-    INDEX IF EXISTS access_level_user_id;
+    INDEX IF EXISTS access_level_user_id on access_level;
 CREATE
     INDEX access_level_user_id
-    ON public.access_level USING btree
-        (user_id ASC NULLS LAST)
-    TABLESPACE pg_default;
+    ON access_level(user_id);
 
 DROP
-    INDEX IF EXISTS access_level_change_log_user_id;
+    INDEX IF EXISTS access_level_change_log_user_id on access_level_change_log;
 CREATE
     INDEX access_level_change_log_user_id
-    ON public.access_level_change_log USING btree
-        (user_id ASC NULLS LAST)
-    TABLESPACE pg_default;
+    ON access_level_change_log(user_id);
 
 DROP
-    INDEX IF EXISTS session_log_user_id;
+    INDEX IF EXISTS session_log_user_id on session_log;
 CREATE
     INDEX session_log_user_id
-    ON public.session_log USING btree
-        (user_id ASC NULLS LAST)
-    TABLESPACE pg_default;
+    ON session_log(user_id);
 
 DROP
-    INDEX IF EXISTS entertainer_access_level_id;
+    INDEX IF EXISTS entertainer_access_level_id on entertainer;
 CREATE
     INDEX entertainer_access_level_id
-    ON public.entertainer USING btree
-        (access_level_id ASC NULLS LAST)
-    TABLESPACE pg_default;
+    ON entertainer(access_level_id);
 
 DROP
-    INDEX IF EXISTS management_access_level_id;
+    INDEX IF EXISTS management_access_level_id on management;
 CREATE
     INDEX management_access_level_id
-    ON public.management USING btree
-        (access_level_id ASC NULLS LAST)
-    TABLESPACE pg_default;
+    ON management(access_level_id);
 
 DROP
-    INDEX IF EXISTS client_access_level_id;
+    INDEX IF EXISTS client_access_level_id on client;
 CREATE
     INDEX client_access_level_id
-    ON public.client USING btree
-        (access_level_id ASC NULLS LAST)
-    TABLESPACE pg_default;
+    ON client(access_level_id);
 
 DROP
-    INDEX IF EXISTS reservation_client_id;
+    INDEX IF EXISTS reservation_client_id on reservation;
 CREATE
     INDEX reservation_client_id
-    ON public.reservation USING btree
-        (client_id ASC NULLS LAST)
-    TABLESPACE pg_default;
+    ON reservation(client_id);
 
 DROP
-    INDEX IF EXISTS reservation_offer_id;
+    INDEX IF EXISTS reservation_offer_id on reservation;
 CREATE
     INDEX reservation_offer_id
-    ON public.reservation USING btree
-        (offer_id ASC NULLS LAST)
-    TABLESPACE pg_default;
+    ON reservation(offer_id);
 
 DROP
-    INDEX IF EXISTS entertainer_unavailability_entertainer_id;
+    INDEX IF EXISTS entertainer_unavailability_entertainer_id on entertainer_unavailability;
 CREATE
     INDEX entertainer_unavailability_entertainer_id
-    ON public.entertainer_unavailability USING btree
-        (entertainer_id ASC NULLS LAST)
-    TABLESPACE pg_default;
+    ON entertainer_unavailability(entertainer_id);
 
 DROP
-    INDEX IF EXISTS offer_entertainer_id;
+    INDEX IF EXISTS offer_entertainer_id on offer;
 CREATE
     INDEX offer_entertainer_id
-    ON public.offer USING btree
-        (entertainer_id ASC NULLS LAST)
-    TABLESPACE pg_default;
+    ON offer(entertainer_id);
 
 DROP
-    INDEX IF EXISTS favourites_client_id;
+    INDEX IF EXISTS favourites_client_id on favourites;
 CREATE
     INDEX favourites_client_id
-    ON public.favourites USING btree
-        (client_id ASC NULLS LAST)
-    TABLESPACE pg_default;
+    ON favourites(client_id);
 
 DROP
-    INDEX IF EXISTS favourites_offer_id;
+    INDEX IF EXISTS favourites_offer_id on favourites;
 CREATE
     INDEX favourites_offer_id
-    ON public.favourites USING btree
-        (offer_id ASC NULLS LAST)
-    TABLESPACE pg_default;
+    ON favourites(offer_id);
 
 DROP
-    INDEX IF EXISTS offer_availability_offer_id;
+    INDEX IF EXISTS offer_availability_offer_id on offer_availability;
 CREATE
     INDEX offer_availability_offer_id
-    ON public.offer_availability USING btree
-        (offer_id ASC NULLS LAST)
-    TABLESPACE pg_default;
+    ON offer_availability(offer_id);

@@ -24,6 +24,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +61,7 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed({"Entertainer", "Management"})
+    @RolesAllowed({"MANAGEMENT", "ENTERTAINER"})
     public List<OfferEntity> getAllOffers() throws AbstractAppException {
         return offerEntityFacade.findAllAndRefresh();
     }
@@ -91,7 +93,7 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed({"Entertainer"})
+    @RolesAllowed({"ENTERTAINER"})
     public List<OfferEntity> getAllEntertainerOffers() throws AbstractAppException {
         List<OfferEntity> offerEntityList = offerEntityFacade.findAllAndRefresh();
         List<OfferEntity> entertainerOfferEntityList = new ArrayList<OfferEntity>();
@@ -110,7 +112,7 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
      * @throws AbstractAppException
      */
     @Override
-    @RolesAllowed({"Client", "Entertainer", "Management"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER", "MANAGEMENT"})
     public OfferEntity getOffer(Long id) throws AbstractAppException {
         OfferEntity offerEntity = offerEntityFacade.findAndRefresh(id);
         if (offerEntity == null) {
@@ -120,7 +122,7 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
     }
 
     //    TODO:javadoc
-    @RolesAllowed("Entertainer")
+    @RolesAllowed("ENTERTAINER")
     @Override
     public OfferEntity createOffer(OfferToCreateDTO offer) throws AbstractAppException {
         EntertainerEntity entertainer = entertainerEntityMooFacade.findByLogin(ctx.getCallerPrincipal().getName());
@@ -156,7 +158,7 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
     }
 
     @Override
-    @RolesAllowed("Entertainer")
+    @RolesAllowed("ENTERTAINER")
     public OfferEntity changeActiveOffer(Long id, boolean active) throws AbstractAppException {
         OfferEntity offer = offerEntityFacade.find(id);
         offer.setActive(active);
@@ -169,11 +171,11 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
      * @return ofertę dodaną do ulubionych
      * @throws AbstractAppException
      */
-    @RolesAllowed("Client")
+    @RolesAllowed("CLIENT")
     @Override
     public OfferEntity addOfferToFavourites(Long id) throws AbstractAppException {
         var offerEntity = offerEntityFacade.findAndRefresh(id);
-        var userEntity = userEntityMooFacade.find(ctx.getCallerPrincipal().getName());
+        var userEntity = userEntityMooFacade.findByLogin(ctx.getCallerPrincipal().getName());
         var clientEntity = clientEntityMooFacade.findByUser(userEntity);
         if (offerEntity == null) {
             throw OfferNotFoundException.createOfferWithProvidedIdNotFoundException(id);
@@ -192,7 +194,7 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
      * @return ofertę usuniętych z  ulubionych
      * @throws AbstractAppException
      */
-    @RolesAllowed("Client")
+    @RolesAllowed("CLIENT")
     @Override
     public OfferEntity deleteOfferFromFavourites(Long id) throws AbstractAppException {
         var offerEntity = offerEntityFacade.findAndRefresh(id);
@@ -214,7 +216,7 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
      * @return listę ulubionych ofert
      * @throws AbstractAppException
      */
-    @RolesAllowed("Client")
+    @RolesAllowed("CLIENT")
     @Override
     public List<OfferEntity> getFavouriteOffers() throws AbstractAppException {
         var userEntity = userEntityMooFacade.findByLogin(ctx.getCallerPrincipal().getName());
@@ -229,7 +231,7 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
      * @return zedytowaną ofertę
      * @throws AbstractAppException
      */
-    @RolesAllowed("Entertainer")
+    @RolesAllowed("ENTERTAINER")
     @Override
     public OfferEntity editOffer(Long id, OfferEditDTO offerEditDTO) throws AbstractAppException {
         OfferEntity offerEntity = offerEntityFacade.findAndRefresh(id);
@@ -251,9 +253,9 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
 
         var offerValidFrom = offerEditDTO.getValidFrom();
         var offerValidTo = offerEditDTO.getValidTo();
-        var currentDateTime = OffsetDateTime.now();
-        boolean validNewDateCurrent = offerValidFrom.isAfter(currentDateTime) || offerValidFrom.isEqual(currentDateTime);
-        boolean validNewDateFromTo = offerValidTo.isAfter(offerValidFrom) || offerValidTo.isEqual(offerValidFrom);
+        var currentDateTime = Timestamp.from(Instant.now());
+        boolean validNewDateCurrent = offerValidFrom.compareTo(currentDateTime) > 0 || offerValidFrom.compareTo(currentDateTime) == 0;
+        boolean validNewDateFromTo = offerValidTo.compareTo(offerValidFrom) > 0 || offerValidTo.compareTo(offerValidFrom) == 0;
         boolean validNewDate = validNewDateCurrent && validNewDateFromTo;
         if (!validNewDate) {
             throw OfferException.createOfferNotAcceptedAppException(offerEditDTO.getId());
@@ -266,8 +268,8 @@ public class OfferManager extends AbstractMooManager implements OfferManagerLoca
         newOffer.setTitle(offerEditDTO.getTitle());
         newOffer.setDescription(offerEditDTO.getDescription());
         newOffer.setActive(true);
-        newOffer.setValidFrom(offerEditDTO.getValidFrom());
-        newOffer.setValidTo(offerEditDTO.getValidTo());
+        newOffer.setValidFrom(Timestamp.from(offerEditDTO.getValidFrom().toInstant()));
+        newOffer.setValidTo(Timestamp.from(offerEditDTO.getValidTo().toInstant()));
         newOffer.setOfferAvailabilities(offerEntity.getOfferAvailabilities());
         newOffer.setEntertainer(offerEntity.getEntertainer());
         offerEntityFacade.create(newOffer);

@@ -26,10 +26,15 @@ import javax.persistence.PersistenceException;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.rmi.NotBoundException;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -83,15 +88,15 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @throws UserNotFoundAppException wyjątek rzucany w przypadku braku podanego id użytkownika w bazie
      */
     @Override
-    @RolesAllowed({"Client", "Entertainer", "Management"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER", "MANAGEMENT"})
     public UserEntity editUserData(PersonalDataEntity newData) throws AbstractAppException {
-        long id = newData.getUserId();
-        UserEntity userEntity = userEntityFacade.find(id);
+//        long id = newData.getUserId();
+        UserEntity userEntity = userEntityFacade.findByLogin(ctx.getCallerPrincipal().getName());
         if (null == userEntity)
-            throw UserNotFoundAppException.createUserWithProvidedIdNotFoundException(id);
+            throw UserNotFoundAppException.createUserWithProvidedIdNotFoundException(userEntity.getId());
         if (!userEntity.getLogin().equals(ctx.getCallerPrincipal().getName()))
             throw NotAllowedAppException.createNotAllowedException();
-        PersonalDataEntity personalDataEntity = personalDataEntityMokFacade.find(id);
+        PersonalDataEntity personalDataEntity = personalDataEntityMokFacade.find(userEntity.getId());
         if (null == personalDataEntity) {
             personalDataEntityMokFacade.create(newData);
             userEntity.setPersonalData(newData);
@@ -143,7 +148,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
             throw InvalidTokenException.createInvalidTokenException(id);
         }
 
-        if (userEntity.getTokenTimestamp().until(OffsetDateTime.now(), ChronoUnit.HOURS) > 24) {
+        if (userEntity.getTokenTimestamp().compareTo(Timestamp.from(Instant.now().minus(24, ChronoUnit.HOURS))) < 0) {
             throw InvalidTokenException.createTokenExpiredException();
         }
 
@@ -172,7 +177,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @throws NewPasswordSameAsOldAppException rzucany w przypadku gdy podane haslo jest takie samo jak poprzednie
      */
     @Override
-    @RolesAllowed({"Client", "Entertainer", "Management"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER", "MANAGEMENT"})
     public UserEntity changePassword(String oldPassword, String newPassword) throws
             AbstractAppException {
         var userEntity = userEntityFacade.findByLogin(ctx.getCallerPrincipal().getName());
@@ -211,7 +216,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @throws UniqueConstraintAppException rzucany w przypadku gdy podane haslo jest takie samo jak poprzednie
      */
     @Override
-    @RolesAllowed({"Client", "Entertainer", "Management"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER", "MANAGEMENT"})
     public UserEntity changeEmail(long id, String token, String email) throws
             AbstractAppException {
         UserEntity userEntity = userEntityFacade.find(id);
@@ -226,7 +231,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
         if (!userEntity.getPasswordResetToken().equals(token)) {
             throw InvalidTokenException.createInvalidTokenException(id);
         }
-        if (userEntity.getTokenTimestamp().until(OffsetDateTime.now(), ChronoUnit.MINUTES) > 20) {
+        if (userEntity.getTokenTimestamp().compareTo(Timestamp.from(Instant.now().minus(20, ChronoUnit.MINUTES))) < 0) {
             throw InvalidTokenException.createTokenExpiredException();
         }
 
@@ -252,7 +257,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
     /**
      * Metoda wysyłająca wiadomość email z tokenem pozwalającym na zmiane adresu email.
      *
-     * @param id    - identyfikator uzytkownika
+     * @param login    - identyfikator uzytkownika
      * @param email - adres email przypisany do konta uzytkownika
      * @return obiekt encji uzytkownika
      * @throws AbstractAppException         abstrakcyjny wyjątek aplikacyjny
@@ -263,7 +268,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @throws UniqueConstraintAppException rzucany w przypadku gdy podane haslo jest takie samo jak poprzednie
      */
     @Override
-    @RolesAllowed({"Client", "Entertainer", "Management"})
+    @RolesAllowed({"CLIENT", "ENTERTAINER", "MANAGEMENT"})
     public UserEntity requestChangeEmail(String login, String email) throws
             AbstractAppException {
 
@@ -277,7 +282,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
         }
         String token = HashGenerator.generateSecureRandomToken();
         userEntity.setPasswordResetToken(token);
-        userEntity.setTokenTimestamp(OffsetDateTime.now());
+        userEntity.setTokenTimestamp(Timestamp.from(Instant.now()));
 
         buttonText = "https://studapp.it.p.lodz.pl:8405/ssbd05/#/account/change-email/confirm/" + userEntity.getId() + "/" + URLEncoder.encode(token, StandardCharsets.UTF_8) + "/" + URLEncoder.encode(email, StandardCharsets.UTF_8);
         try {
@@ -320,7 +325,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
         if (HashGenerator.checkPassword(newPassword, userEntity.getPassword())) {
             throw NewPasswordSameAsOldAppException.createNewPasswordSameAsOldAppException();
         }
-        if (userEntity.getTokenTimestamp().until(OffsetDateTime.now(), ChronoUnit.MINUTES) > 20) {
+        if (userEntity.getTokenTimestamp().compareTo(Timestamp.from(Instant.now().minus(20, ChronoUnit.MINUTES))) < 0) {
             throw InvalidTokenException.createTokenExpiredException();
         }
 
@@ -353,7 +358,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
 
         String token = HashGenerator.generateSecureRandomToken();
         userEntity.setPasswordResetToken(token);
-        userEntity.setTokenTimestamp(OffsetDateTime.now());
+        userEntity.setTokenTimestamp(Timestamp.from(Instant.now()));
 
         buttonText = "https://studapp.it.p.lodz.pl:8405/ssbd05/#/confirmresetpassword/?id=" + userEntity.getId() + "&token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
 
@@ -375,7 +380,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @throws UserNotFoundAppException   rzucany w przypadku gdy uzytkownik nie został znaleziony
      */
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     public UserEntity activateUserAccount(Long id) throws AbstractAppException {
         UserEntity userEntity;
         buttonText = "noButton";
@@ -403,7 +408,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @throws UserNotFoundAppException   rzucany w przypadku gdy uzytkownik nie został znaleziony
      */
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     public UserEntity deactivateUserAccount(Long id) throws AbstractAppException {
         UserEntity userEntity;
 
@@ -428,7 +433,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @throws AbstractAppException - abstrakcyjny wyjątek aplikacyjny
      */
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     public List<UserEntity> getAllUsers() throws AbstractAppException {
         return userEntityFacade.findAllAndRefresh().stream().filter(userEntity -> !userEntity.getLogin().startsWith("#")).collect(Collectors.toList());
     }
@@ -441,7 +446,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @throws AbstractAppException - abstrakcyjny wyjątek aplikacyjny
      */
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     public List<UserEntity> getUserByPieceOfData(String query) throws AbstractAppException {
         List<PersonalDataEntity> personalDataEntityList = personalDataEntityMokFacade.findByNameOrSurname(query);
         List<UserEntity> list = new ArrayList<UserEntity>();
@@ -460,7 +465,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @throws UserNotFoundAppException rzucany w przypadku gdy uzytkownik nie został znaleziony
      */
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     public UserEntity getUser(Long id) throws AbstractAppException {
         UserEntity userEntity = userEntityFacade.findAndRefresh(id);
         if (userEntity == null) {
@@ -477,7 +482,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @return lista użytkowników na danej stronie
      */
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     public List<UserEntity> getUsersByPage(Long pageNumber) throws AbstractAppException {
         int pageSize = 2;
         return userEntityFacade.findAll().stream()
@@ -487,7 +492,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
     }
 
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     public UserEntity changePrivileges(Long id, List<AccessLevelDTO> accessLevelDTOList) throws AbstractAppException {
         UserEntity userEntity = userEntityFacade.findAndRefresh(id);
         if (userEntity == null) {
@@ -524,7 +529,7 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
      * @param id - identyfikator konta
      */
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     public void deleteUser(Long id) throws AbstractAppException {
 
         UserEntity userEntity = userEntityFacade.findAndRefresh(id);
@@ -559,11 +564,11 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
     public void deleteUnverifiedUsers(Integer systemSchedulerHour) throws AbstractAppException {
         List<UserEntity> userEntityList = userEntityFacade.findAll();
         for (UserEntity userEntity : userEntityList) {
-            if (!userEntity.isVerified() && userEntity.getTokenTimestamp().until(OffsetDateTime.now(), ChronoUnit.HOURS) > systemSchedulerHour / 2) {
+            if (!userEntity.isVerified() && userEntity.getTokenTimestamp().compareTo(Timestamp.from(Instant.now().minus(systemSchedulerHour / 2, ChronoUnit.HOURS))) < 0) {
                 buttonText = "https://studapp.it.p.lodz.pl:8405/ssbd05/resources/user/verify/?id=" + userEntity.getId() + "&token=" + userEntity.getPasswordResetToken();
                 mailManager.createAndSendEmailFromTemplate(userEntity, "titleNearDeleteAccount", "headerTextNearDeleteAccount", buttonText, "footerTextDeleteAccount");
             }
-            if (!userEntity.isVerified() && userEntity.getTokenTimestamp().until(OffsetDateTime.now(), ChronoUnit.HOURS) >= systemSchedulerHour) {
+            if (!userEntity.isVerified() && userEntity.getTokenTimestamp().compareTo(Timestamp.from(Instant.now().minus(systemSchedulerHour, ChronoUnit.HOURS))) <= 0) {
                 buttonText = "https://studapp.it.p.lodz.pl:8405/ssbd05/#/register";
 //                personalDataEntityMokFacade.remove(userEntity.getPersonalData());
                 for (AccessLevelEntity ac : userEntity.getAccessLevels())
@@ -579,10 +584,9 @@ public class UserManager extends AbstractMokManager implements UserManagerLocal 
     }
 
     @Override
-    @RolesAllowed("Management")
+    @RolesAllowed("MANAGEMENT")
     public AccessLevelEntity changeAccessLevelStatus(Long id, boolean status) throws AbstractAppException {
         AccessLevelEntity accessLevelEntity = accessLevelEntityMokFacade.find(id);
-
         UserEntity userEnt = userEntityFacade.findAllAndRefresh()
                 .stream()
                 .filter(user -> user.getAccessLevels()

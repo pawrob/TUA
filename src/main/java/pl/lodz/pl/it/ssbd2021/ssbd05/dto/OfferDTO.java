@@ -6,7 +6,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.OffsetDateTime;
+import java.sql.Timestamp;
 
 @Getter
 @Setter
@@ -22,11 +22,9 @@ public class OfferDTO extends AbstractDTO {
     @NotNull
     private boolean isActive;
 
-    @NotBlank
-    private OffsetDateTime validFrom;
+    private Timestamp validFrom;
 
-    @NotBlank
-    private OffsetDateTime validTo;
+    private Timestamp validTo;
 
     private Double avgRating;
 
@@ -34,8 +32,8 @@ public class OfferDTO extends AbstractDTO {
 
 
     public OfferDTO(long id, Long version, @NotBlank String title, String description,
-                    @NotBlank @NotNull boolean isActive, @NotBlank OffsetDateTime validFrom,
-                    @NotBlank OffsetDateTime validTo, Double avgRating, boolean isFavourite) {
+                    @NotBlank @NotNull boolean isActive, Timestamp validFrom,
+                    Timestamp validTo, Double avgRating, boolean isFavourite) {
         super(id, version);
         this.title = title;
         this.description = description;
@@ -47,8 +45,8 @@ public class OfferDTO extends AbstractDTO {
     }
 
     public OfferDTO(long id, Long version, @NotBlank String title, String description,
-                    @NotBlank @NotNull boolean isActive, @NotBlank OffsetDateTime validFrom,
-                    @NotBlank OffsetDateTime validTo, Double avgRating) {
+                    @NotBlank @NotNull boolean isActive, Timestamp validFrom,
+                    Timestamp validTo, Double avgRating) {
         super(id, version);
         this.title = title;
         this.description = description;
@@ -59,8 +57,8 @@ public class OfferDTO extends AbstractDTO {
     }
 
     public OfferDTO(@NotBlank String title, String description,
-                    @NotBlank @NotNull boolean isActive, @NotBlank OffsetDateTime validFrom,
-                    @NotBlank OffsetDateTime validTo, Double avgRating) {
+                    @NotBlank @NotNull boolean isActive, Timestamp validFrom,
+                    Timestamp validTo, Double avgRating) {
         this.title = title;
         this.description = description;
         this.isActive = isActive;
