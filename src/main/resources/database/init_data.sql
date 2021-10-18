@@ -133,32 +133,32 @@ VALUES (-303, -5, '2021-03-12 17:02:13', 'MANAGEMENT');
 
 # offer
 INSERT INTO offer (id, entertainer_id, title, description, valid_from, valid_to)
-VALUES (-51, -11, 'Picie wody na zawody', 'Pije wode duszkiem, a ty liczysz czas', '2021-06-01 11:20:13',
-        '2021-08-20 23:00:00');
+VALUES (-51, -11, 'Picie wody na zawody', 'Pije wode duszkiem, a ty liczysz czas', '2020-06-01 11:20:13',
+        '2023-08-20 23:00:00');
 INSERT INTO offer (id, entertainer_id, title, description, valid_from, valid_to)
 VALUES (-52, -11, 'Animator urodzinowy dla dzieci', 'Wszystkie dzieci nasze są',
-        '2021-05-01 10:03:13', '2021-10-01 00:00:00');
+        '2021-05-01 10:03:13', '2024-10-01 00:00:00');
 INSERT INTO offer (id, entertainer_id, title, description, valid_from, valid_to)
 VALUES (-53, -11, 'Rzeźbienie w styropianie', 'Tak jak w tytule, koszty materiału pokrywa klient',
-        '2020-01-01 00:03:13', '2022-01-01 00:00:00');
+        '2020-01-01 00:03:13', '2025-01-01 00:00:00');
 INSERT INTO offer (id, entertainer_id, title, description, valid_from, valid_to)
 VALUES (-54, -14, 'Rozbawię kazdego', 'Dowcipy i wygłupy, jeśli zachowasz powagę - zwracam pieniadzę',
-        '2019-07-01 10:03:13', '2022-09-11 00:00:00');
+        '2019-07-01 10:03:13', '2024-09-11 00:00:00');
 INSERT INTO offer (id, entertainer_id, title, description, valid_from, valid_to)
 VALUES (-55, -14, 'Wizualizacje świetlne latarką LED', 'Dla tych, którzy szukają mocnych wrażeń',
-        '2021-02-24 00:05:13', '2021-12-23 00:00:00');
+        '2021-02-24 00:05:13', '2022-12-23 00:00:00');
 
 # offer_availability
 INSERT INTO offer_availability (id, offer_id, week_day, hours_from, hours_to)
-VALUES (-61, -51, 6, '10:00:00', '18:00:00');
+VALUES (-61, -51, 6, '06:00:00', '22:00:00');
 INSERT INTO offer_availability (id, offer_id, week_day, hours_from, hours_to)
-VALUES (-62, -52, 5, '10:00:00', '18:00:00');
+VALUES (-62, -52, 5, '06:00:00', '22:00:00');
 INSERT INTO offer_availability (id, offer_id, week_day, hours_from, hours_to)
-VALUES (-63, -53, 0, '08:00:00', '12:00:00');
+VALUES (-63, -53, 0, '06:00:00', '22:00:00');
 INSERT INTO offer_availability (id, offer_id, week_day, hours_from, hours_to)
-VALUES (-64, -54, 1, '06:00:00', '20:00:00');
+VALUES (-64, -54, 1, '06:00:00', '22:00:00');
 INSERT INTO offer_availability (id, offer_id, week_day, hours_from, hours_to)
-VALUES (-65, -55, 2, '12:00:00', '22:00:00');
+VALUES (-65, -55, 2, '06:00:00', '22:00:00');
 
 # reservation
 INSERT INTO reservation (id, client_id, offer_id, reservation_from, reservation_to, status)
