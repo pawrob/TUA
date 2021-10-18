@@ -10,7 +10,6 @@ import store from './store'
 import { VueReCaptcha } from 'vue-recaptcha-v3'
 // noinspection ES6UnusedImports
 import {} from '@/vee-validate'
-import moment from "moment";
 import VueMarkdownEditor from '@kangc/v-md-editor';
 import '@kangc/v-md-editor/lib/style/base-editor.css';
 import vuepressTheme from '@kangc/v-md-editor/lib/theme/vuepress.js';
@@ -36,7 +35,7 @@ Vue.use(VueSuggestion)
 Vue.filter('formatDate', function(value) {
   console.log(value);
   if (value) {
-    return moment(String(value)).format('DD/MM/YYYY HH:mm')
+    return new Date(value)
   }
 })
 Vue.filter('formatTime', function(value) {
