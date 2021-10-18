@@ -32,7 +32,7 @@ public class PersonalDataEntity {
 
     @Basic
     @Version
-    @Column(name = "version", nullable = false)
+    @Column(name = "version", nullable = false, columnDefinition = "BIGINT default 1")
     public long getVersion() {
         return version;
     }
@@ -57,7 +57,7 @@ public class PersonalDataEntity {
     }
 
     @Basic
-    @Column(name = "language", nullable = false, length = 3)
+    @Column(name = "language", nullable = false, length = 3, columnDefinition = "varchar(3) default 'PL'")
     public String getLanguage() {
         return language;
     }

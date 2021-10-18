@@ -211,8 +211,6 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
     }
 
     private static boolean offerAvailabilityValidation(OfferAvailabilityEntity offerAvailability, ReservationEntity reservation) {
-//        OfferAvailabilityDTO offerAvailabilityDTO = OfferAvailabilityConverter.offerAvailabilityEntityToDTO(offerAvailability);
-//        ReservationDTO reservationDTO = ReservationConverter.reservationEntityToDTO(reservation);
         final Calendar cal = Calendar.getInstance();
         cal.setTime(reservation.getReservationFrom());
         final int reservationFromDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
@@ -232,14 +230,12 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
 
         boolean validation = offerAvailabilityFromTime.compareTo(reservationFromTime) <= 0;
         validation &= offerAvailabilityToTime.compareTo(reservationToTime) >= 0;
-        // todo sprawdzic czy 6 czy 7 to niedziela czy nawet 0 i czy sie zgadzaja
         validation &= offerAvailability.getWeekDay() + 1 == reservationFromDayOfWeek;
         validation &= offerAvailability.getWeekDay() + 1 == reservationToDayOfWeek;
         return validation;
     }
 
     private static boolean offerAvailabilityValidation(OfferAvailabilityEntity offerAvailability, ReservationEditDTO reservation) {
-//        OfferAvailabilityDTO offerAvailabilityDTO = OfferAvailabilityConverter.offerAvailabilityEntityToDTO(offerAvailability);
         Calendar cal = Calendar.getInstance();
         cal.setTime(offerAvailability.getHoursFrom());
         int availabilityFromHours = cal.get(Calendar.HOUR);
@@ -253,13 +249,11 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
         int reservationToDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
         boolean validation = availabilityFromHours <= reservationFromHours;
         validation &= availabilityToHours >= reservationToHours;
-        // todo sprawdzic czy 6 czy 7 to niedziela czy nawet 0 i czy sie zgadzaja
         validation &= offerAvailability.getWeekDay() == reservationToDayOfWeek;
         validation &= offerAvailability.getWeekDay() == reservationFromDayOfWeek;
         return validation;
     }
 
-    //    TODO: javadoc
     @Override
     public ReservationEntity updateReservation(Long id, ReservationEntity newReservation) {
         throw new UnsupportedOperationException();
@@ -448,6 +442,7 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
         } catch (AbstractAppException abstractAppException) {
             throw abstractAppException;
         }
+        // to nic :)
         /*System.out.println(reservationEditDTO == null ? "reservationEditDTO null" : reservationEditDTO.toString());
         System.out.println(reservationEditDTO.getReservationTo() == null ? " getReservationTonull" : reservationEditDTO.getReservationTo().toString());
         System.out.println(reservationEditDTO.getReservationFrom() == null ? " getReservationFromnull" : reservationEditDTO.getReservationFrom().toString());

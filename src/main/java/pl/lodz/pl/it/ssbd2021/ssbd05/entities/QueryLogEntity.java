@@ -16,7 +16,7 @@ public class QueryLogEntity extends AbstractEntity {
     private UserEntity user;
 
     @Basic
-    @Column(name = "action_timestamp", nullable = false)
+    @Column(name = "action_timestamp", nullable = false, columnDefinition = "datetime default CURRENT_TIMESTAMP")
     public Timestamp getActionTimestamp() {
         return actionTimestamp;
     }

@@ -50,7 +50,7 @@ public class UserEntity extends AbstractEntity {
     }
 
     @Basic
-    @Column(name = "is_active", nullable = false)//, columnDefinition = "boolean default true")
+    @Column(name = "is_active", nullable = false, columnDefinition = "boolean default true")//, columnDefinition = "boolean default true")
     public boolean isActive() {
         return isActive;
     }
@@ -68,13 +68,13 @@ public class UserEntity extends AbstractEntity {
     }
 
     @Basic
-    @Column(name = "token_timestamp", nullable = false)
+    @Column(name = "token_timestamp")
     public Timestamp getTokenTimestamp() {
         return tokenTimestamp;
     }
 
     @Basic
-    @Column(name = "failed_login", nullable = false)
+    @Column(name = "failed_login", nullable = false, columnDefinition = "integer default 0")
     public int getFailedLogin() {
         return failedLogin;
     }

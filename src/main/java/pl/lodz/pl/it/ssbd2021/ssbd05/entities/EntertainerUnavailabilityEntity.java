@@ -22,7 +22,7 @@ public class EntertainerUnavailabilityEntity extends AbstractEntity {
     private long entertainerId;
 
     @Basic
-    @Column(name = "is_valid", nullable = false)
+    @Column(name = "is_valid", nullable = false, columnDefinition = "boolean default true")
     public boolean isValid() {
         return isValid;
     }

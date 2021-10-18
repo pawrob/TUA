@@ -25,7 +25,7 @@ public abstract class AccessLevelEntity extends AbstractEntity {
     }
 
     @Basic
-    @Column(name = "is_active", nullable = false)
+    @Column(name = "is_active", nullable = false, columnDefinition = "boolean default true")
     public boolean isActive() {
         return isActive;
     }
