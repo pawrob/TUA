@@ -22,7 +22,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -62,7 +64,9 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
     @Inject
     private OfferEntityMooFacade offerFacade;
 
-    /** Pobiera wszystkie rezerwacja, dostępne role "Management"
+    /**
+     * Pobiera wszystkie rezerwacja, dostępne role "Management"
+     *
      * @return listę wszystkich rezerwacji
      * @throws AbstractAppException
      */
@@ -72,7 +76,9 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
         return reservationFacade.findAllAndRefresh();
     }
 
-    /** Zwraca rezerwację zalogowanego klienta, dostępne role "Client"
+    /**
+     * Zwraca rezerwację zalogowanego klienta, dostępne role "Client"
+     *
      * @return listę rezerwacji klienta
      * @throws AbstractAppException
      */
@@ -84,7 +90,9 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
         return reservationFacade.findReservationByClient(clientEntity);
     }
 
-    /** Zwraca pojedyńczą rezerwację po id, dostępne role: wszystkie
+    /**
+     * Zwraca pojedyńczą rezerwację po id, dostępne role: wszystkie
+     *
      * @param id id rezerwacji do wyświetlenia
      * @return rezerwację o podanym id
      * @throws AbstractAppException
@@ -98,6 +106,7 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
         }
         return reservationEntity;
     }
+
     @Override
     @RolesAllowed({"ENTERTAINER"})
     public ReservationEntity endReservation(Long id) throws AbstractAppException {
@@ -112,9 +121,11 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
     }
 
 
-    /** Tworzy nową rezerwację, dostępne role: "Client"
-     * @param reservation szczegóły rezerwacji
-     * @param offerId id oferty której tyczy się rezerwacja
+    /**
+     * Tworzy nową rezerwację, dostępne role: "Client"
+     *
+     * @param reservation  szczegóły rezerwacji
+     * @param offerId      id oferty której tyczy się rezerwacja
      * @param offerVersion wersja oferty
      * @return
      * @throws AbstractAppException
@@ -181,7 +192,7 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
                 );
 
         validationResult &= reservationDTO.getReservationFrom().compareTo(offer.getValidFrom()) > 0;
-        validationResult &= reservationDTO.getReservationTo().compareTo(offer.getValidTo()) > 0;
+        validationResult &= reservationDTO.getReservationTo().compareTo(offer.getValidTo()) < 0;
 
         List<ReservationEntity> allForEntertainer = reservationFacade.findAllForEntertainer(entertainer.getId());
         return validationResult && allForEntertainer
@@ -202,22 +213,28 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
     private static boolean offerAvailabilityValidation(OfferAvailabilityEntity offerAvailability, ReservationEntity reservation) {
 //        OfferAvailabilityDTO offerAvailabilityDTO = OfferAvailabilityConverter.offerAvailabilityEntityToDTO(offerAvailability);
 //        ReservationDTO reservationDTO = ReservationConverter.reservationEntityToDTO(reservation);
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(offerAvailability.getHoursFrom());
-        int availabilityFromHours = cal.get(Calendar.HOUR);
+        final Calendar cal = Calendar.getInstance();
         cal.setTime(reservation.getReservationFrom());
-        int reservationFromHours = cal.get(Calendar.HOUR);
-        int reservationFromDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-        cal.setTime(offerAvailability.getHoursTo());
-        int availabilityToHours = cal.get(Calendar.HOUR);
+        final int reservationFromDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
         cal.setTime(reservation.getReservationTo());
-        int reservationToHours = cal.get(Calendar.HOUR);
         int reservationToDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-        boolean validation = availabilityFromHours <= reservationFromHours;
-        validation &= availabilityToHours >= reservationToHours;
+
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        final String reservationFromTimeStr = sdf.format(reservation.getReservationFrom()) + ":00";
+        final String reservationToTimeStr = sdf.format(reservation.getReservationTo()) + ":00";
+        final String offerAvailabilityFromTimeStr = sdf.format(offerAvailability.getHoursFrom()) + ":00";
+        final String offerAvailabilityToTimeStr = sdf.format(offerAvailability.getHoursTo()) + ":00";
+
+        final Time offerAvailabilityFromTime = Time.valueOf(offerAvailabilityFromTimeStr);
+        final Time offerAvailabilityToTime = Time.valueOf(offerAvailabilityToTimeStr);
+        final Time reservationFromTime = Time.valueOf(reservationFromTimeStr);
+        final Time reservationToTime = Time.valueOf(reservationToTimeStr);
+
+        boolean validation = offerAvailabilityFromTime.compareTo(reservationFromTime) <= 0;
+        validation &= offerAvailabilityToTime.compareTo(reservationToTime) >= 0;
         // todo sprawdzic czy 6 czy 7 to niedziela czy nawet 0 i czy sie zgadzaja
-        validation &= offerAvailability.getWeekDay() == reservationFromDayOfWeek;
-        validation &= offerAvailability.getWeekDay() == reservationToDayOfWeek;
+        validation &= offerAvailability.getWeekDay() + 1 == reservationFromDayOfWeek;
+        validation &= offerAvailability.getWeekDay() + 1 == reservationToDayOfWeek;
         return validation;
     }
 
@@ -242,14 +259,16 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
         return validation;
     }
 
-//    TODO: javadoc
+    //    TODO: javadoc
     @Override
     public ReservationEntity updateReservation(Long id, ReservationEntity newReservation) {
         throw new UnsupportedOperationException();
     }
 
 
-    /** Akceptacja rezerwacji przez PDR, dostępne role: "Entertainer"
+    /**
+     * Akceptacja rezerwacji przez PDR, dostępne role: "Entertainer"
+     *
      * @param id id rezerwacji
      * @return Zaakceptowaną rezerwację
      * @throws AbstractAppException
@@ -271,12 +290,12 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
     /**
      * Metoda managera pozwalająca na modyfikację oceny i komentarza do danej rezerwacji
      *
-     * @param id - identyfikator rezerwacji
-     * @param rating - ocena
+     * @param id      - identyfikator rezerwacji
+     * @param rating  - ocena
      * @param comment - komentarz
      * @return encja rezerwacji po zmianie
      * @throws ReservationNotFoundAppException - wyjątek rzucany w przypadku nie znalezienia rezerwacji po danym identyfikatorze
-     * @throws NotAllowedAppException - wyjątek rzucany w przypadku braku uprawnień
+     * @throws NotAllowedAppException          - wyjątek rzucany w przypadku braku uprawnień
      */
     @Override
     @RolesAllowed({"CLIENT"})
@@ -305,7 +324,7 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
      * @param id - identyfikator rezerwacji
      * @return encja rezerwacji po zmianie
      * @throws ReservationNotFoundAppException - wyjątek rzucany w przypadku nie znalezienia rezerwacji po danym identyfikatorze
-     * @throws NotAllowedAppException - wyjątek rzucany w przypadku braku uprawnień
+     * @throws NotAllowedAppException          - wyjątek rzucany w przypadku braku uprawnień
      */
     @Override
     @RolesAllowed({"CLIENT"})
@@ -334,7 +353,7 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
      * @param id - identyfikator rezerwacji
      * @return encja rezerwacji po zmianie
      * @throws ReservationNotFoundAppException - wyjątek rzucany w przypadku nie znalezienia rezerwacji po danym identyfikatorze
-     * @throws NotAllowedAppException - wyjątek rzucany w przypadku braku uprawnień
+     * @throws NotAllowedAppException          - wyjątek rzucany w przypadku braku uprawnień
      */
     @Override
     @RolesAllowed({"MANAGEMENT"})
@@ -372,7 +391,9 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
         entertainer.setAvgRating(averageEntertainer.isPresent() ? averageEntertainer.getAsDouble() : null);
     }
 
-    /** Zwraca wszystkie rezerwacje zalogowanego PDR, dostępne role: "Entertainer"
+    /**
+     * Zwraca wszystkie rezerwacje zalogowanego PDR, dostępne role: "Entertainer"
+     *
      * @return liste rezerwacji pdr
      */
     @Override
@@ -383,8 +404,10 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
     }
 
 
-    /** Edycja rezerwacji przez klienta, dostępne role: "Client"
-     * @param id id rezerwacji
+    /**
+     * Edycja rezerwacji przez klienta, dostępne role: "Client"
+     *
+     * @param id                 id rezerwacji
      * @param reservationEditDTO szczególy zmian rezerwacji
      * @return zmienioną rezerwację
      * @throws AbstractAppException
@@ -477,7 +500,9 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
         return reservationFacade.findAndRefresh(id);*/
     }
 
-    /** Wycofywanie rezerwacji przez klienta, dostępne role: "Client"
+    /**
+     * Wycofywanie rezerwacji przez klienta, dostępne role: "Client"
+     *
      * @param id id rezerwacji
      * @return zwraca wycofaną rezerwację
      * @throws AbstractAppException
@@ -500,7 +525,9 @@ public class ReservationManager extends AbstractMooManager implements Reservatio
     }
 
 
-    /** Wycofywanie rezerwacji przez PDR, dostępne role: "Entertainer"
+    /**
+     * Wycofywanie rezerwacji przez PDR, dostępne role: "Entertainer"
+     *
      * @param id id rezerwacji
      * @return Wycofaną rezerwację
      * @throws AbstractAppException

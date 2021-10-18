@@ -239,8 +239,8 @@ CREATE TABLE offer_availability
     id         BIGINT           NOT NULL auto_increment,
     offer_id   BIGINT              NOT NULL,
     week_day   INTEGER             NOT NULL,
-    hours_from DATETIME NOT NULL,
-    hours_to   DATETIME NOT NULL,
+    hours_from TIME NOT NULL,
+    hours_to   TIME NOT NULL,
     version    BIGINT              NOT NULL DEFAULT 1,
     CONSTRAINT offer_availability_pkey PRIMARY KEY (id),
     CONSTRAINT offer_availability_offer_id_fkey FOREIGN KEY (offer_id)
