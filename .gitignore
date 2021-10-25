@@ -2,3 +2,4 @@
 target
 *.iml
 /server.log
+./workdir

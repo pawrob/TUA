@@ -1,0 +1,29 @@
+version: "2"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: "app"
+    depends_on:
+      - db
+    ports:
+      - "8443:8443" # application
+      - "9990:9990" # admin console
+
+  db:
+    container_name: "db"
+    image: "mariadb:latest"
+    volumes:
+      - ./src/main/resources/database/create_roles.sql:/docker-entrypoint-initdb.d/1-create_roles.sql
+      - ./src/main/resources/database/create_database.sql:/docker-entrypoint-initdb.d/2-create_database.sql
+      - ./src/main/resources/database/init_data.sql:/docker-entrypoint-initdb.d/3-init_data.sql
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+    ports:
+      - "3306:3306"
+
+networks:
+  default:
+    driver: bridge

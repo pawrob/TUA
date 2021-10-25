@@ -21,7 +21,7 @@ DROP TABLE IF EXISTS ssbd05.personal_data;
 DROP TABLE IF EXISTS ssbd05.user;
 
 
-CREATE TABLE user
+CREATE TABLE ssbd05.user
 (
 
     id                   BIGINT             NOT NULL auto_increment,
@@ -46,7 +46,7 @@ CREATE TABLE user
 GRANT ALL PRIVILEGES ON ssbd05.user TO 'ssbd05admin'@'%';
 
 
-CREATE TABLE personal_data
+CREATE TABLE ssbd05.personal_data
 (
     user_id      BIGINT               NOT NULL,
     name         CHARACTER VARYING(30),
@@ -69,7 +69,7 @@ CREATE TABLE personal_data
 GRANT ALL PRIVILEGES ON ssbd05.personal_data TO 'ssbd05admin'@'%';
 
 
-CREATE TABLE access_level
+CREATE TABLE ssbd05.access_level
 (
     id           BIGINT             NOT NULL auto_increment,
     user_id      BIGINT                NOT NULL,
@@ -88,7 +88,7 @@ CREATE TABLE access_level
 GRANT ALL PRIVILEGES ON ssbd05.access_level TO 'ssbd05admin'@'%';
 
 
-CREATE TABLE entertainer
+CREATE TABLE ssbd05.entertainer
 (
     access_level_id BIGINT NOT NULL,
     description     CHARACTER VARYING(2048),
@@ -105,7 +105,7 @@ GRANT ALL PRIVILEGES ON ssbd05.entertainer TO 'ssbd05admin'@'%';
 
 
 
-CREATE TABLE management
+CREATE TABLE ssbd05.management
 (
     access_level_id BIGINT NOT NULL,
     version         BIGINT NOT NULL DEFAULT 1,
@@ -119,7 +119,7 @@ CREATE TABLE management
 GRANT ALL PRIVILEGES ON ssbd05.management TO 'ssbd05admin'@'%';
 
 
-CREATE TABLE client
+CREATE TABLE ssbd05.client
 (
     access_level_id BIGINT NOT NULL,
     version         BIGINT NOT NULL DEFAULT 1,
@@ -133,7 +133,7 @@ CREATE TABLE client
 GRANT ALL PRIVILEGES ON ssbd05.client TO 'ssbd05admin'@'%';
 
 
-CREATE TABLE entertainer_unavailability
+CREATE TABLE ssbd05.entertainer_unavailability
 (
     id             BIGINT                NOT NULL auto_increment,
     entertainer_id BIGINT                   NOT NULL,
@@ -153,7 +153,7 @@ CREATE TABLE entertainer_unavailability
 GRANT ALL PRIVILEGES ON ssbd05.entertainer_unavailability TO 'ssbd05admin'@'%';
 
 
-CREATE TABLE query_log
+CREATE TABLE ssbd05.query_log
 (
     id               BIGINT                NOT NULL auto_increment,
     user_id          BIGINT,
@@ -175,7 +175,7 @@ CREATE TABLE query_log
 GRANT ALL PRIVILEGES ON ssbd05.query_log TO 'ssbd05admin'@'%';
 
 
-CREATE TABLE session_log
+CREATE TABLE ssbd05.session_log
 (
     id               BIGINT                NOT NULL auto_increment,
     user_id          BIGINT,
@@ -195,7 +195,7 @@ CREATE TABLE session_log
 GRANT ALL PRIVILEGES ON ssbd05.session_log TO 'ssbd05admin'@'%';
 
 
-CREATE TABLE access_level_change_log
+CREATE TABLE ssbd05.access_level_change_log
 (
     id               BIGINT                NOT NULL auto_increment,
     user_id          BIGINT                   NOT NULL,
@@ -212,7 +212,7 @@ CREATE TABLE access_level_change_log
 GRANT ALL PRIVILEGES ON ssbd05.access_level_change_log TO 'ssbd05admin'@'%';
 
 
-CREATE TABLE offer
+CREATE TABLE ssbd05.offer
 (
     id             BIGINT                NOT NULL auto_increment,
     entertainer_id BIGINT                   NOT NULL,
@@ -234,7 +234,7 @@ CREATE TABLE offer
 GRANT ALL PRIVILEGES ON ssbd05.offer TO 'ssbd05admin'@'%';
 
 
-CREATE TABLE offer_availability
+CREATE TABLE ssbd05.offer_availability
 (
     id         BIGINT           NOT NULL auto_increment,
     offer_id   BIGINT              NOT NULL,
@@ -253,7 +253,7 @@ CREATE TABLE offer_availability
 GRANT ALL PRIVILEGES ON ssbd05.offer_availability TO 'ssbd05admin'@'%';
 
 
-CREATE TABLE reservation
+CREATE TABLE ssbd05.reservation
 (
     id               BIGINT                NOT NULL auto_increment,
     client_id        BIGINT                   NOT NULL,
@@ -279,7 +279,7 @@ CREATE TABLE reservation
 GRANT ALL PRIVILEGES ON ssbd05.reservation TO 'ssbd05admin'@'%';
 
 
-CREATE TABLE favourites
+CREATE TABLE ssbd05.favourites
 (
     client_id BIGINT NOT NULL,
     offer_id  BIGINT NOT NULL,
@@ -299,14 +299,14 @@ GRANT ALL PRIVILEGES ON ssbd05.favourites TO 'ssbd05admin'@'%';
 
 
 -- widok laczący uzytkownikow, z przypisanymi im poziomami dostepow
-CREATE OR REPLACE VIEW authentication_view
+CREATE OR REPLACE VIEW ssbd05.authentication_view
 AS
 SELECT al.id,
        u.login,
        u.password,
        al.access_level
 FROM ssbd05.user u
-         JOIN access_level al
+         JOIN ssbd05.access_level al
               ON u.id = al.user_id
 WHERE u.is_active
   AND u.is_verified
@@ -354,91 +354,91 @@ GRANT INSERT ON TABLE ssbd05.access_level_change_log TO 'ssbd05mok'@'%';
 
 -- indeksy dla kluczy obcych
 DROP
-    INDEX IF EXISTS personal_data_user_id on personal_data;
+    INDEX IF EXISTS personal_data_user_id on ssbd05.personal_data;
 CREATE
     INDEX personal_data_user_id
-    ON personal_data(user_id);
+    ON ssbd05.personal_data(user_id);
 
 DROP
-    INDEX IF EXISTS query_log_user_id on query_log;
+    INDEX IF EXISTS query_log_user_id on ssbd05.query_log;
 CREATE
     INDEX query_log_user_id
-    ON query_log(user_id);
+    ON ssbd05.query_log(user_id);
 
 DROP
-    INDEX IF EXISTS access_level_user_id on access_level;
+    INDEX IF EXISTS access_level_user_id on ssbd05.access_level;
 CREATE
     INDEX access_level_user_id
-    ON access_level(user_id);
+    ON ssbd05.access_level(user_id);
 
 DROP
-    INDEX IF EXISTS access_level_change_log_user_id on access_level_change_log;
+    INDEX IF EXISTS access_level_change_log_user_id on ssbd05.access_level_change_log;
 CREATE
     INDEX access_level_change_log_user_id
-    ON access_level_change_log(user_id);
+    ON ssbd05.access_level_change_log(user_id);
 
 DROP
-    INDEX IF EXISTS session_log_user_id on session_log;
+    INDEX IF EXISTS session_log_user_id on ssbd05.session_log;
 CREATE
     INDEX session_log_user_id
-    ON session_log(user_id);
+    ON ssbd05.session_log(user_id);
 
 DROP
-    INDEX IF EXISTS entertainer_access_level_id on entertainer;
+    INDEX IF EXISTS entertainer_access_level_id on ssbd05.entertainer;
 CREATE
     INDEX entertainer_access_level_id
-    ON entertainer(access_level_id);
+    ON ssbd05.entertainer(access_level_id);
 
 DROP
-    INDEX IF EXISTS management_access_level_id on management;
+    INDEX IF EXISTS management_access_level_id on ssbd05.management;
 CREATE
     INDEX management_access_level_id
-    ON management(access_level_id);
+    ON ssbd05.management(access_level_id);
 
 DROP
-    INDEX IF EXISTS client_access_level_id on client;
+    INDEX IF EXISTS client_access_level_id on ssbd05.client;
 CREATE
     INDEX client_access_level_id
-    ON client(access_level_id);
+    ON ssbd05.client(access_level_id);
 
 DROP
-    INDEX IF EXISTS reservation_client_id on reservation;
+    INDEX IF EXISTS reservation_client_id on ssbd05.reservation;
 CREATE
     INDEX reservation_client_id
-    ON reservation(client_id);
+    ON ssbd05.reservation(client_id);
 
 DROP
-    INDEX IF EXISTS reservation_offer_id on reservation;
+    INDEX IF EXISTS reservation_offer_id on ssbd05.reservation;
 CREATE
     INDEX reservation_offer_id
-    ON reservation(offer_id);
+    ON ssbd05.reservation(offer_id);
 
 DROP
-    INDEX IF EXISTS entertainer_unavailability_entertainer_id on entertainer_unavailability;
+    INDEX IF EXISTS entertainer_unavailability_entertainer_id on ssbd05.entertainer_unavailability;
 CREATE
     INDEX entertainer_unavailability_entertainer_id
-    ON entertainer_unavailability(entertainer_id);
+    ON ssbd05.entertainer_unavailability(entertainer_id);
 
 DROP
-    INDEX IF EXISTS offer_entertainer_id on offer;
+    INDEX IF EXISTS offer_entertainer_id on ssbd05.offer;
 CREATE
     INDEX offer_entertainer_id
-    ON offer(entertainer_id);
+    ON ssbd05.offer(entertainer_id);
 
 DROP
-    INDEX IF EXISTS favourites_client_id on favourites;
+    INDEX IF EXISTS favourites_client_id on ssbd05.favourites;
 CREATE
     INDEX favourites_client_id
-    ON favourites(client_id);
+    ON ssbd05.favourites(client_id);
 
 DROP
-    INDEX IF EXISTS favourites_offer_id on favourites;
+    INDEX IF EXISTS favourites_offer_id on ssbd05.favourites;
 CREATE
     INDEX favourites_offer_id
-    ON favourites(offer_id);
+    ON ssbd05.favourites(offer_id);
 
 DROP
-    INDEX IF EXISTS offer_availability_offer_id on offer_availability;
+    INDEX IF EXISTS offer_availability_offer_id on ssbd05.offer_availability;
 CREATE
     INDEX offer_availability_offer_id
-    ON offer_availability(offer_id);
+    ON ssbd05.offer_availability(offer_id);
