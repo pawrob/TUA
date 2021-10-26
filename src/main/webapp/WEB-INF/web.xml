@@ -4,17 +4,17 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
          version="4.0">
     <default-context-path>/ssbd05</default-context-path>
-    <security-constraint>
-        <display-name>TransportSecured</display-name>
-        <web-resource-collection>
-            <web-resource-name>TransportSecured</web-resource-name>
-            <url-pattern>/*</url-pattern>
-        </web-resource-collection>
-        <user-data-constraint>
-            <description>USE: http --verify no https://localhost:8181/ssbd05/</description>
-            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
-        </user-data-constraint>
-    </security-constraint>
+<!--    <security-constraint>-->
+<!--        <display-name>TransportSecured</display-name>-->
+<!--        <web-resource-collection>-->
+<!--            <web-resource-name>TransportSecured</web-resource-name>-->
+<!--            <url-pattern>/*</url-pattern>-->
+<!--        </web-resource-collection>-->
+<!--        <user-data-constraint>-->
+<!--            <description>USE: http &#45;&#45;verify no https://localhost:8181/ssbd05/</description>-->
+<!--            <transport-guarantee>CONFIDENTIAL</transport-guarantee>-->
+<!--        </user-data-constraint>-->
+<!--    </security-constraint>-->
 
     <!--Roles declaration-->
     <security-role>
