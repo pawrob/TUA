@@ -2,9 +2,7 @@ version: "2"
 
 services:
   app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: "pawrob/wildfly_tua05:latest"
     container_name: "app"
     depends_on:
       - db
