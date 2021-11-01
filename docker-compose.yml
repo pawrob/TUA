@@ -11,6 +11,8 @@ services:
     ports:
         - "8443:8443" # application
         - "9990:9990" # admin console
+    expose:
+      - "8080"
 
   db:
     build:
