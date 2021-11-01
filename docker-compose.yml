@@ -8,9 +8,9 @@ services:
     container_name: "app"
     depends_on:
       - db
-    ports:
-        - "8443:8443" # application
-        - "9990:9990" # admin console
+#    ports:
+#        - "8443:8443" # application
+#        - "9990:9990" # admin console
     expose:
       - "8080"
 
@@ -26,7 +26,7 @@ services:
     image: nginx:latest
     container_name: nginx
     depends_on:
-      - tua
+      - app
       - db
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
