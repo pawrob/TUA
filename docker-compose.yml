@@ -20,12 +20,19 @@ services:
     ports:
       - "3306:3306"
 
-    #    volumes:
-    #      - ./src/main/resources/database/1-create_roles.sql:/docker-entrypoint-initdb.d/1-1-create_roles.sql
-    #      - ./src/main/resources/database/2-create_database.sql:/docker-entrypoint-initdb.d/2-2-create_database.sql
-    #      - ./src/main/resources/database/3-init_data.sql:/docker-entrypoint-initdb.d/3-3-init_data.sql
-    #    environment:
-    #      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    depends_on:
+      - tua
+      - db
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/certificate.crt:/etc/ssl/certs/nginx/certificate.crt
+      - ./nginx/certificate.key:/etc/ssl/certs/nginx/certificate.key
+    ports:
+      - 80:80
+      - 443:443
 
 networks:
   default:
