@@ -39,6 +39,7 @@ public class AuthenticationMechanism implements HttpAuthenticationMechanism {
             "resources/user/successLogin/.*",
             "resources/user/successLogin",
             "resources/moo/offer/allActive",
+            "/resources/javaee8",
     };
 
     /**
