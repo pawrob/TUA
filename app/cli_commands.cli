@@ -1,11 +1,11 @@
 deploy /opt/jboss/wildfly/todeploy/mariadb-java-client-2.3.0.jar
 
-data-source add --name=ssbd05adminDS --enabled=true --jndi-name=java:jboss/jdbc/ssbd05adminDS --transaction-isolation=TRANSACTION_READ_COMMITTED --driver-name=mariadb-java-client-2.3.0.jar --connection-url=jdbc:mariadb://tua-db-test:3306/ssbd05 --user-name=ssbd05admin --password=L0dbr0k --use-ccm=false
+data-source add --name=ssbd05adminDS --enabled=true --jndi-name=java:jboss/jdbc/ssbd05adminDS --transaction-isolation=TRANSACTION_READ_COMMITTED --driver-name=mariadb-java-client-2.3.0.jar --connection-url=jdbc:mariadb://172.30.47.87:3306/ssbd05 --user-name=ssbd05admin --password=L0dbr0k --use-ccm=false
 
-data-source add --name=ssbd05authDS --enabled=true --jndi-name=java:jboss/jdbc/ssbd05authDS --transaction-isolation=TRANSACTION_READ_COMMITTED --driver-name=mariadb-java-client-2.3.0.jar --connection-url=jdbc:mariadb://tua-db-test:3306/ssbd05 --user-name=ssbd05auth --password=woj@uth --use-ccm=false
+data-source add --name=ssbd05authDS --enabled=true --jndi-name=java:jboss/jdbc/ssbd05authDS --transaction-isolation=TRANSACTION_READ_COMMITTED --driver-name=mariadb-java-client-2.3.0.jar --connection-url=jdbc:mariadb://172.30.47.87:3306/ssbd05 --user-name=ssbd05auth --password=woj@uth --use-ccm=false
 
-data-source add --name=ssbd05mokDS --enabled=true --jndi-name=java:jboss/jdbc/ssbd05mokDS --transaction-isolation=TRANSACTION_READ_COMMITTED --driver-name=mariadb-java-client-2.3.0.jar --connection-url=jdbc:mariadb://tua-db-test:3306/ssbd05 --user-name=ssbd05mok --password=w1k1ngow1e --use-ccm=false
+data-source add --name=ssbd05mokDS --enabled=true --jndi-name=java:jboss/jdbc/ssbd05mokDS --transaction-isolation=TRANSACTION_READ_COMMITTED --driver-name=mariadb-java-client-2.3.0.jar --connection-url=jdbc:mariadb://172.30.47.87:3306/ssbd05 --user-name=ssbd05mok --password=w1k1ngow1e --use-ccm=false
 
-data-source add --name=ssbd05mooDS --enabled=true --jndi-name=java:jboss/jdbc/ssbd05mooDS --transaction-isolation=TRANSACTION_READ_COMMITTED --driver-name=mariadb-java-client-2.3.0.jar --connection-url=jdbc:mariadb://tua-db-test:3306/ssbd05 --user-name=ssbd05moo --password=w0j0wnicy --use-ccm=false
+data-source add --name=ssbd05mooDS --enabled=true --jndi-name=java:jboss/jdbc/ssbd05mooDS --transaction-isolation=TRANSACTION_READ_COMMITTED --driver-name=mariadb-java-client-2.3.0.jar --connection-url=jdbc:mariadb://172.30.47.87:3306/ssbd05 --user-name=ssbd05moo --password=w0j0wnicy --use-ccm=false
 
 deploy --force /opt/jboss/wildfly/todeploy/ssbd05-Kv1.0.0.war
