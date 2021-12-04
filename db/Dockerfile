@@ -3,8 +3,9 @@ FROM mariadb:latest
 RUN chgrp -R 0 /docker-entrypoint-initdb.d && \
     chmod -R g=u /docker-entrypoint-initdb.d
 
+RUN chgrp -R 0 /var/lib/mysql && \
+    chmod -R g=u /var/lib/mysql
 
-RUN chmod -R 777 /var/lib/mysql
 ENV MYSQL_ROOT_PASSWORD Admin123!
 ENV MYSQL_DATABASE ssbd05
 ENV MYSQL_USER ssbd05
